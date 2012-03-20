@@ -1,0 +1,2 @@
+bin/gindent @PREFIX@/bin/indent
+bin/gtexinfo2man @PREFIX@/bin/texinfo2man

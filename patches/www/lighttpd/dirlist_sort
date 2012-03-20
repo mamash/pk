@@ -1,0 +1,191 @@
+$NetBSD$
+
+--- src/mod_dirlisting.c.orig	2010-02-01 23:28:20.000000000 +0000
++++ src/mod_dirlisting.c
+@@ -22,6 +22,19 @@
+  * this is a dirlisting for a lighttpd plugin
+  */
+ 
++// you can't change these values without changing
++// the constant strings in http_list_directory_header()
++#define SORT_MIN 1
++#define SORT_ALPHA 1
++#define SORT_MODIFIED 2
++#define SORT_SIZE 3
++#define SORT_MAX 3
++
++#define SORT_DIR_MIN 1
++#define SORT_DIR_ASC 1
++#define SORT_DIR_DESC 2
++#define SORT_DIR_MAX 2
++
+ 
+ #ifdef HAVE_SYS_SYSLIMITS_H
+ #include <sys/syslimits.h>
+@@ -411,10 +424,11 @@ typedef struct {
+ #define DIRLIST_BLOB_SIZE		16
+ 
+ /* simple combsort algorithm */
+-static void http_dirls_sort(dirls_entry_t **ent, int num) {
++static void http_dirls_sort(dirls_entry_t **ent, int num, int type, int dir) {
+ 	int gap = num;
+ 	int i, j;
+ 	int swapped;
++	int res;
+ 	dirls_entry_t *tmp;
+ 
+ 	do {
+@@ -427,11 +441,31 @@ static void http_dirls_sort(dirls_entry_
+ 
+ 		for (i = 0; i < num - gap; i++) {
+ 			j = i + gap;
+-			if (strcmp(DIRLIST_ENT_NAME(ent[i]), DIRLIST_ENT_NAME(ent[j])) > 0) {
+-				tmp = ent[i];
+-				ent[i] = ent[j];
+-				ent[j] = tmp;
+-				swapped = 1;
++			if (type == SORT_ALPHA) {
++				res = strcmp(DIRLIST_ENT_NAME(ent[i]), DIRLIST_ENT_NAME(ent[j]));
++				if ((dir == SORT_DIR_ASC && res > 0) || 
++					(dir == SORT_DIR_DESC && res < 0)) {
++					tmp = ent[i];
++					ent[i] = ent[j];
++					ent[j] = tmp;
++					swapped = 1;
++				}
++			} else if (type == SORT_MODIFIED) {
++				if ((dir == SORT_DIR_ASC && ent[i]->mtime > ent[j]->mtime) ||
++					(dir == SORT_DIR_DESC && ent[i]->mtime < ent[j]->mtime)) {
++					tmp = ent[i];
++					ent[i] = ent[j];
++					ent[j] = tmp;
++					swapped = 1;
++				}
++			} else if (type == SORT_SIZE) {
++				if ((dir == SORT_DIR_ASC && ent[i]->size > ent[j]->size) ||
++					(dir == SORT_DIR_DESC && ent[i]->size < ent[j]->size)) {
++					tmp = ent[i];
++					ent[i] = ent[j];
++					ent[j] = tmp;
++					swapped = 1;
++				}
+ 			}
+ 		}
+ 
+@@ -478,8 +512,12 @@ static int http_list_directory_sizefmt(c
+ 	return (out + 3 - buf);
+ }
+ 
+-static void http_list_directory_header(server *srv, connection *con, plugin_data *p, buffer *out) {
++static void http_list_directory_header(server *srv, connection *con, plugin_data *p, buffer *out, int sort, int sort_dir) {
+ 	UNUSED(srv);
++	int sort_dir_rev;
++
++	sort_dir_rev = SORT_DIR_ASC;
++	if (sort_dir == SORT_DIR_ASC) sort_dir_rev = SORT_DIR_DESC;
+ 
+ 	if (p->conf.auto_layout) {
+ 		buffer_append_string_len(out, CONST_STR_LEN(
+@@ -563,10 +601,36 @@ static void http_list_directory_header(s
+ 		"<table summary=\"Directory Listing\" cellpadding=\"0\" cellspacing=\"0\">\n"
+ 		"<thead>"
+ 		"<tr>"
+-			"<th class=\"n\">Name</th>"
+-			"<th class=\"m\">Last Modified</th>"
+-			"<th class=\"s\">Size</th>"
+-			"<th class=\"t\">Type</th>"
++		"<th class=\"n\"><a href=\"?s=1&d="
++	));
++	if (sort == SORT_ALPHA) {
++		buffer_append_long(out, sort_dir_rev);
++	} else {
++		buffer_append_long(out, sort_dir);
++	}
++	buffer_append_string(out,
++		"\">Name</th>"
++		"<th class=\"m\"><a href=\"?s=2&d="
++	);
++	if (sort == SORT_MODIFIED) {
++		buffer_append_long(out, sort_dir_rev);
++	} else {
++		buffer_append_long(out, SORT_DIR_DESC);
++	}
++	buffer_append_string(out,
++		"\">Last Modified</th>"
++		"<th class=\"s\"><a href=\"?s=3&d="
++	);
++	if (sort == SORT_SIZE) {
++		buffer_append_long(out, sort_dir_rev);
++	} else {
++		buffer_append_long(out, sort_dir);
++	}
++	buffer_append_string(out,
++		"\">Size</th>"
++		"<th class=\"t\">Type</th>"
++	);
++	buffer_append_string_len(out, CONST_STR_LEN(
+ 		"</tr>"
+ 		"</thead>\n"
+ 		"<tbody>\n"
+@@ -644,6 +708,8 @@ static int http_list_directory(server *s
+ 	size_t k;
+ 	const char *content_type;
+ 	long name_max;
++	int sort_dir;
++	int sort;
+ #ifdef HAVE_XATTR
+ 	char attrval[128];
+ 	int attrlen;
+@@ -683,6 +749,25 @@ static int http_list_directory(server *s
+ 		return -1;
+ 	}
+ 
++	sort_dir = 0;
++	sort = 0;
++	if (!buffer_is_empty(con->uri.query)) {
++		char *q;
++		if ((q = strstr(con->uri.query->ptr, "s="))) {
++			if (*(q+2) != 0) sort = atoi(q+2); 
++		}
++		if ((q = strstr(con->uri.query->ptr, "d="))) {
++			if (*(q+2) != 0) sort_dir = atoi(q+2); 
++		}
++	}
++
++	if ((sort_dir < SORT_DIR_MIN) || (sort_dir > SORT_DIR_MAX)) {
++		sort_dir = SORT_DIR_ASC;
++	}
++	if ((sort < SORT_MIN) || (sort > SORT_MAX)) {
++		sort = SORT_ALPHA;
++	}
++
+ 	dirs.ent   = (dirls_entry_t**) malloc(sizeof(dirls_entry_t*) * DIRLIST_BLOB_SIZE);
+ 	assert(dirs.ent);
+ 	dirs.size  = DIRLIST_BLOB_SIZE;
+@@ -774,9 +859,15 @@ static int http_list_directory(server *s
+ 	}
+ 	closedir(dp);
+ 
+-	if (dirs.used) http_dirls_sort(dirs.ent, dirs.used);
++	if (dirs.used) {
++		if (sort != SORT_SIZE) {
++			http_dirls_sort(dirs.ent, dirs.used, sort, sort_dir );
++		} else {
++			http_dirls_sort(dirs.ent, dirs.used, SORT_ALPHA, SORT_DIR_DESC );
++		}
++	}
+ 
+-	if (files.used) http_dirls_sort(files.ent, files.used);
++	if (files.used) http_dirls_sort(files.ent, files.used, sort, sort_dir );
+ 
+ 	out = chunkqueue_get_append_buffer(con->write_queue);
+ 	buffer_copy_string_len(out, CONST_STR_LEN("<?xml version=\"1.0\" encoding=\""));
+@@ -786,7 +877,7 @@ static int http_list_directory(server *s
+ 		buffer_append_string_buffer(out, p->conf.encoding);
+ 	}
+ 	buffer_append_string_len(out, CONST_STR_LEN("\"?>\n"));
+-	http_list_directory_header(srv, con, p, out);
++	http_list_directory_header(srv, con, p, out, sort, sort_dir);
+ 
+ 	/* directories */
+ 	for (i = 0; i < dirs.used; i++) {

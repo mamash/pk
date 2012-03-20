@@ -1,0 +1,12 @@
+# $NetBSD$
+
+case ${STAGE} in
+POST-INSTALL)
+	if [ -d @MYSQL_DATADIR@/mysql ]; then
+		echo "Skipping MySQL database initialization, as databases already exist."
+	else
+		# Initialize MySQL
+		${PKG_PREFIX}/bin/mysql_install_db --datadir=@MYSQL_DATADIR@ --user=@MYSQL_USER@
+	fi
+	;;
+esac

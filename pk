@@ -1,0 +1,490 @@
+#!/usr/bin/bash
+
+# pk 1.0.0
+# builds and manages pkgsrc packages
+
+set -o errexit
+
+cur_dir=$(dirname $0)
+script_name=$(basename $0)
+source ${cur_dir}/common.inc || exit 1
+
+init $@
+
+case ${cmd} in
+  clean)
+   cleanup
+  ;;
+
+  help)
+    cat <<EOF
+
+${script_name} - The Joyent pkgsrc helper
+
+Usage:
+
+  ${script_name} <command> [ option1 .. optionN ] [ target1 .. targetN ]
+
+  Where commands are:
+
+    build     - Builds one or more packages specified as targets (use the
+                category/package syntax). You can specify list targets
+                instead where list is a plain text file that contains a list
+                of packages.
+                If you end the package/list entry with '=version', we'll
+                try to figure out which pkgsrc versioned scheme is applicable
+                (e.g. RUBY_VERSION_DEFAULT) and use it.
+
+    bootstrap - Creates a bootstrap image tarball using pkgsrc base, and the
+                pkgin and gcc-runtime packages.
+
+    changelog - Generates a changelog file that sums up packages added,
+                removed, upgraded or downgraded.
+
+    clean     - Rolls the file system back to the initial snapshot (requires
+                the machine to be set up with delegated ZFS control).
+
+    help      - This message.
+
+    info      - Information about the current setup/state.
+
+    init      - Prepares a new prefix and runs the pkgsrc bootstrap script.
+
+    mount     - Mounts the file system to match the release active in the git
+                repository (requires ZFS delegation).
+
+    prune     - Removes stale binary packages (typically leaving only the
+                most current package version in place).
+
+    sync      - Syncs the binary package repository over to the web server.
+
+EOF
+  ;;
+
+  info)
+    cat <<EOF
+
+Current setup:
+
+  pkgsrc release   : ${release}
+  prefix           : ${prefix}
+  prefix mounted   : ${zfs_path}
+  architecture     : ${abi}bit
+
+  compiler type    : ${compiler}
+  compiler path    : ${compiler_cmd}
+  compiler version : ${compiler_version}
+
+EOF
+  ;;
+
+  build)
+    log "this is ${release}, ${compiler} ${compiler_version}, ${abi}bit ABI, for ${prefix}"
+
+    cleanup
+
+    for target in ${targets[@]}; do
+      case ${target} in
+        *php*)
+          version=${target#*=}
+          [ ${version} == ${target} ] && version=53
+          version_string="PHP_VERSION_DEFAULT=${version//\./}"
+          target=${target%=*}
+          ;;
+        *ruby*)
+          version=${target#*=}
+          [ ${version} == ${target} ] && version=18
+          version_string="RUBY_VERSION_DEFAULT=${version//\./}"
+          target=${target%=*}
+          ;;
+        *python*|*/py-*)
+          version=${target#*=}
+          [ ${version} == ${target} ] && version=27
+          version_string="PYTHON_VERSION_DEFAULT=${version//\./}"
+          target=${target%=*}
+          ;;
+        *)
+          version_string=""
+          target=${target%=*}
+          ;;
+      esac
+
+      if [[ ${target} =~ / ]]; then
+        packages=(${target})
+        build_set=${target}
+        log_subdir=
+	log_version=_${version}
+      else
+        packages=$(cat ${package_lists}/${target})
+        build_set=${target}
+        log_subdir=${target/\//_}${version_string+-${version}}
+      fi 
+
+      unset bmake_env
+      construct_bmake_env
+      skipped=0
+
+      log "* ${build_set}${version_string:+ (${version_string})}"
+      for package in ${packages[@]}; do
+        package_log=${log_dir}/${log_subdir}/${package/\//_}${log_version}
+        [ -d $(dirname ${package_log}) ] || mkdir $(dirname ${package_log})
+        if [ -d ${pkgsrcdir}/${package} ]; then
+          cd ${pkgsrcdir}/${package}
+        else
+          log "  skipped missing ${package}"
+          cleanup
+          continue
+        fi
+        if [ ! ${forced_rebuild} ] && \
+           [ -f $(bmake ${bmake_env[@]} show-var VARNAME=PKGFILE) ]
+        then
+          ((skipped=skipped+1))
+          continue
+        elif [ ${skipped-0} -gt 0 ]; then
+          log "  skipped ${skipped} packages built previously"
+          skipped=0
+        fi
+
+        trap "log '!!! TERM caught'; cleanup; exit" INT TERM
+        log "  * ${package}: start"
+
+        status=0
+        > ${package_log}.log
+        list_package_files ante
+        set +e
+        bmake ${bmake_env[@]} package >${package_log}.log 2>&1
+        status=$?
+        set -e
+        list_package_files post
+
+        diff_files=$(diff_package_files)
+        diff_files=$(echo -n ${diff_files}) 
+        rm ${package_log}.{ante,post} 2>/dev/null
+
+        if [ ${status} -eq 0 ]; then
+          log "    ${package}: BUILD_OK"
+          [ -f ${package_log}.log ] && rm ${package_log}.log
+        else
+          failed_package=$(/usr/bin/grep 'stopped in' ${package_log}.log | \
+                           /usr/bin/head -1 | \
+                           /usr/bin/awk -F/ '{print $4"/"$5}' | \
+                           /usr/bin/tr '\n' ' ')
+          if grep PKG_FAIL_REASON ${package_log}.log >/dev/null; then
+            fail_reason=BUILD_REJECTED
+          else
+            fail_reason=BUILD_FAILED
+          fi
+          log "    ${package}: ${fail_reason}${failed_package:+ in ${failed_package% }}"
+        fi
+	[ -n "${diff_files}" ] && log "    ${package}: changed package files: ${diff_files}"
+        trap - INT TERM
+        cleanup
+      done
+      if [ ${skipped} -gt 0 ]; then
+        log "  skipped ${skipped} packages built previously"
+        skipped=0
+      fi
+      if [ ${log_subdir} ]; then
+        rmdir $(dirname ${package_log}) 2>/dev/null || true
+      fi
+    done
+  ;;
+
+  mount)
+    # switch the current prefix/release/whatnot mounted
+    mount_prefix || log "!!! Couldn't mount the ${prefix} prefix"
+  ;;
+
+  check)
+    # loop thru binary packages and create an array with pkgsrc paths
+    [ ${packages} ] && unset packages
+
+    log "parsing binary package files"
+    packages=($(pkg_info -Q PKGPATH ${pkg_dir}/All/*.tgz|sort -uf))
+
+    log "checking ${#packages[@]} packages..."
+
+    for pkgpath in ${packages[@]}; do
+      if [ -d ${pkgsrcdir}/${pkgpath} ]; then
+        cd ${pkgsrcdir}/${pkgpath} 2>/dev/null
+      else
+        log "package ${pkgpath} doesn't exist"
+        continue
+      fi
+
+      depends=$(bmake show-depends)
+      case ${depends} in
+        *php*)
+          version_var=PHP_VERSION_DEFAULT
+          version_nos=(53)
+          ;;
+        *python*)
+          version_var=PYTHON_VERSION_DEFAULT
+          version_nos=(27)
+          ;;
+        *ruby*)
+          version_var=RUBY_VERSION_DEFAULT
+          version_nos=(1.8 1.9)
+          ;;
+        *postgresql*)
+          version_var=PGSQL_VERSION_DEFAULT
+          version_nos=(90)
+          ;;
+        *)
+          unset version_var
+          unset version_nos
+          ;;
+      esac
+
+      for version in ${version_nos[@]:-' '}; do
+        version_string=${version_var:+${version_var}=}${version}}
+        construct_bmake_env
+        current_pkgfile=$(bmake ${bmake_env} show-var VARNAME=PKGFILE)
+        if [ ! -f ${current_pkgfile} ]; then
+          log "${pkgpath} needs update${version_var:+ for ${version_var}=${version}}"
+        fi
+      done
+    done
+  ;;
+
+  fix)
+    # Broken packages & bad libs should be defined in ~/.pk
+    # The script will loop through broken packages and take out
+    # references to bad libs (assuming the linking is actually
+    # correct, and the references stale)
+    : ${broken_packages=()}
+    : ${bad_libs=()}
+
+    find_tool pkg_tarup || exit 1
+    cd $(eval echo ${pkg_dir})/All
+
+    for pkgfile in *.tgz; do
+      pkgname=$(basename ${pkgfile%\.tgz})
+      pkgbase=${pkgname%-*}
+      pkgdbdir=/opt/local/pkg/${pkgname}
+
+      for broken_package in ${broken_packages[@]}; do
+        if [ ${broken_package} == ${pkgbase} ]; then
+          if needs_fixing; then
+            fix_requires
+          fi
+        fi
+      done
+    done
+  ;;
+    
+  prune)
+    # prune_exceptions should be defined in ~/.pk
+    # those packages will be ignored when looking
+    # for older versions to prune
+
+    cd ${pkg_dir}/All
+ 
+    for file in $(/bin/ls -1 | sed 's/-[^-]*tgz//' | sort | uniq -c | awk '{if ($1 != "1") print $2}'); do
+      unset keep remove exception
+      keep=(  $(ls -1dr ${file}-* | grep -v "${file}-.*-" |\
+              sort -r -t. -k 1,1r -k 2,2nr -k 3,3nr -k 4,4nr -k 5,5nr |\
+              head -1 | sed 's/\.tgz//'))
+      remove=($(ls -1dr ${file}-* | grep -v "${file}-.*-" |\
+              sort -r -t. -k 1,1r -k 2,2nr -k 3,3nr -k 4,4nr -k 5,5nr |\
+              tail +2 | sed 's/\.tgz//'))
+
+      for exception in "" ${prune_exceptions[@]}; do
+        if [[ ${file} =~ ^${exception%-*}$ ]]; then
+          keep=(${keep[@]} $(echo ${remove[@]} | sed "s/.* \(${exception}[^ ]*\)/\1/"))
+          remove=($(echo ${remove[@]} | sed "s/${exception}[^ ]*//"))
+          continue  1
+        fi
+      done
+
+      if [ ${#remove[@]} -gt 0 ]; then
+        echo "* ${file}, suggesting to" 
+        echo "    - keep ${keep[*]##*-}, and"
+	read -p "    - drop ${remove[*]##*-}, go ahead? y/N " -n 1 ask
+        if [ "${ask}" == "y" ]; then
+          rm ${remove[@]/%/.tgz}
+        fi
+        echo
+      fi
+    done
+
+  ;;
+  
+  sync)
+    find_tool pkg_info || exit 1
+    find_tool gzip || exit 1
+    find_tool rsync || exit 1
+
+    repo_dir=${platform}/${release}/${build_id}
+
+    log "sync for ${release}/${build_id} (${url}/${repo_dir})"
+
+    rm -rf ${pkg_dir}/none
+
+    # fix stale symlinks
+    cd ${pkg_dir}
+    for file in $(find . -type l | sort); do
+      /usr/bin/file ${file} | grep 'symbolic link' >/dev/null && \
+        rm ${file}
+    done
+    cd ${OLDPWD}
+
+    prev_package_set=$(find_prev_package_set)
+
+    if [[ ${prev_package_set} =~ not-found ]]; then
+      log "previous package set couldn't be identified, skipping changelog update"
+    else
+      log "generating changelog against ${prev_package_set}"
+      generate_changelog ${prev_package_set}
+    fi
+
+    log "generating package information for pkg_summary.gz"
+    AWK=nawk /usr/bin/bash ${pkgsrcdir}/mk/scripts/binpkg-cache -s -p ${pkg_dir} >/dev/null
+    log "checking for packages prohibited from being published"
+    nawk -f ${pkgsrcdir}/mk/scripts/binpkg-scan PACKAGES=${pkg_dir} /dev/null > /tmp/remove-restricted.sh
+    if grep NO_BIN /tmp/remove-restricted.sh >/dev/null; then
+      log "found restricted packages, see the /tmp/remove-restricted.sh script"
+    fi
+
+    log "generating MD5 sums of package files"
+    cd ${pkg_dir}/All
+    /usr/bin/digest -a md5 *.tgz | sed 's/(\(.*\)) = \([0-9a-f]*\)/\2  \1/' > ./md5sums.txt
+
+    log "starting rsync"
+    if [ ${repo_dir} ]; then
+      ssh pkgsrc.joyent.com "[ -d /home/pkgsrc/${repo_dir} ] || mkdir -p /home/pkgsrc/${repo_dir}"
+      ${rsync} -az --delete --rsync-path=/opt/local/bin/rsync \
+        ${pkg_dir}/ pkgsrc.joyent.com:/home/pkgsrc/${repo_dir}/
+    fi
+  ;;
+
+  licenses)
+    find_tool pkg_info || exit 1
+
+    log "licenses: ${release}, ${compiler}-${compiler_version}, ${abi}bit"
+    log "checking licenses for all packages"
+    cd ${pkg_dir}/All
+    for pkgfile in *.tgz; do
+      eval $(pkg_info -X ${pkgfile} | \
+        awk -F= '{
+          if ($1~/PKGPATH|LICENSE|HOMEPAGE/) \
+            print $1"=\""$2"\"" }')  
+      echo "${PKGPATH}:${HOMEPAGE}:${LICENSE:-unknown}"
+    done
+  ;;
+
+  changelog)
+    prev_release=${targets[0]}
+    case ${prev_release} in
+    '')
+      cat <<EOF
+You must specify the previous release to diff against (e.g. '2011Q1' or
+'2010Q4/gcc44' if using a different compiler ID).
+EOF
+      exit 1
+      ;;
+    */*)
+      prev_build_id=${prev_release##*/}
+      prev_release=${prev_release%%/*}
+      ;;
+    *)
+      prev_build_id=${build_id}
+      ;;
+    esac
+    generate_changelog ${prev_release}/${prev_build_id}
+  ;;
+
+  init)
+    [ -d ${pkg_dir} ] || mkdir -p ${pkg_dir}
+    if [ ! -x ${pkgsrcdir}/bootstrap/bootstrap ]; then
+      log "couldn't find the bootstrap script. does ${pkgsrcdir} contain the pkgsrc tree?"
+      exit 1
+    fi
+    check_compiler
+    create_prefix
+    ${script_name} mount -p ${prefix} -a ${abi} -r ${release} >/dev/null 2>&1
+    log "running pkgsrc bootstrap"
+    if [ -d /tmp/pkgsrc ]; then
+      rm -rf /tmp/pkgsrc
+    fi
+    case ${compiler} in
+      sunpro) BOOTSTRAP_ENV="SUNWSPROBASE=${compiler_dir%/bin} CC=cc CXX=CC CPP='cc -E' CXXCPP='CC -E'" ;;
+    esac
+    /usr/bin/env ${BOOTSTRAP_ENV} ${pkgsrcdir}/bootstrap/bootstrap \
+        --prefix ${prefix} \
+        --pkgdbdir ${prefix}/pkg \
+        --workdir /tmp/pkgsrc \
+        --varbase /var \
+        --compiler ${compiler} \
+        --abi ${abi} \
+        --mk-fragment ${overlay}/config/fragment.mk \
+        --binary-kit ${pkg_dir}/bootstrap.tar \
+        > ${log_dir}/${script_name}.log 2>&1
+    if [ ${overlay} ]; then
+      /usr/bin/sed "/PKGMANDIR/a\\
+OVERLAY=		${overlay}
+" ${prefix}/etc/mk.conf > /tmp/mk.conf && \
+        mv /tmp/mk.conf ${prefix}/etc/mk.conf
+    fi
+
+    touch ${prefix}/.dlj_license_accepted
+
+    snapshot_prefix bootstrap
+    log "all done; now build gcc-runtime, gcc-compiler and create the @start snapshot"
+  ;;
+
+  bootstrap)
+    log "preparing a bootstrap image"
+
+    cleanup
+
+    bootstrap_pkgs=(
+      bmake
+      bootstrap-mk-files
+      bzip2
+      gcc-runtime
+      install-sh
+      libarchive
+      nawk
+      nbsed
+      pdksh
+      pkgin
+      pkg_install
+      xz
+      zlib
+    )
+
+    log "processing required packages"
+
+    (cat <<-EOF
+	${prefix}/etc/mk.conf
+	${prefix}/etc/pkg_install.conf
+	${prefix}/etc/pkgin
+	${prefix}/pkg/pkgdb.byfile.db
+	EOF
+    for pkg in ${bootstrap_pkgs[@]}; do
+      if ! pkg_info -q -e ${pkg}; then
+        PKG_PATH=${pkg_dir}/All pkg_add ${pkg} >/dev/null 2>&1
+      fi
+      pkg_name=$(pkg_info -e ${pkg})
+      pkg_info -qL ${pkg_name}
+      echo "${prefix}/pkg/${pkg_name}"
+    done) | sed 's/^/./' | sort > /tmp/.bootstrap_files
+
+    sed "/^ABI/s/32/${abi}/" ${prefix}/etc/mk.conf > /tmp/.mk.conf && \
+      mv /tmp/.mk.conf ${prefix}/etc/mk.conf
+    echo "${repo_url}/All" > ${prefix}/etc/pkgin/repositories.conf
+    echo "PKG_PATH=${repo_url}/All" > ${prefix}/etc/pkg_install.conf
+
+    log "creating the final tarball"
+
+    cd / && \
+      tar -cf - -T /tmp/.bootstrap_files | \
+        gzip > ${pkg_dir}/bootstrap.tar.gz
+    rm -f /tmp/.bootstrap_files
+
+    cleanup
+
+  ;;
+
+esac

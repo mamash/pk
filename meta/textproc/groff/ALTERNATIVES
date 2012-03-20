@@ -1,0 +1,11 @@
+bin/geqn @PREFIX@/bin/eqn
+bin/ggrn @PREFIX@/bin/grn
+bin/gindxbib @PREFIX@/bin/indxbib
+bin/glookbib @PREFIX@/bin/lookbib
+bin/gneqn @PREFIX@/bin/neqn
+bin/gnroff @PREFIX@/bin/nroff
+bin/gpic @PREFIX@/bin/pic
+bin/grefer @PREFIX@/bin/refer
+bin/gsoelim @PREFIX@/bin/soelim
+bin/gtbl @PREFIX@/bin/tbl
+bin/gtroff @PREFIX@/bin/troff

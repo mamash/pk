@@ -1,0 +1,49 @@
+# $NetBSD$
+
+case ${STAGE} in
+POST-INSTALL)
+
+  if [ ! -f @PGLOGFILE@ ]; then
+    touch @PGLOGFILE@
+    chown @PGUSER@ @PGLOGFILE@
+    chgrp @PGGROUP@ @PGLOGFILE@
+  fi
+
+  if [ -d @PGHOME@ ] && [ -d @PGDATA@ ]; then
+    echo "Skipping database initialization, data directory already exists."
+  else
+
+    cat - <<EOF
+
+Initializing PostgreSQL database storage.
+
+EOF
+
+    echo "postgres" > /tmp/.pgpasswd
+
+    if [ ! -d @PGHOME@ ]; then
+      mkdir @PGHOME@
+      chown @PGUSER@ @PGHOME@
+      chgrp @PGGROUP@ @PGHOME@
+    fi
+
+    /usr/bin/su - @PGUSER@ -c \
+      ${PKG_PREFIX}'/bin/initdb \
+      --pgdata=@PGDATA@ \
+      --encoding=UTF8 \
+      --locale=en_US.UTF-8 \
+      --auth=password \
+      --pwfile=/tmp/.pgpasswd' >/dev/null
+
+    rm /tmp/.pgpasswd
+
+    cat - <<EOF
+The PostgreSQL database cluster has been initialized.
+
+The default password for the master '@PGUSER@' user is:
+
+  postgres
+
+EOF
+  fi
+;;

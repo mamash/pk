@@ -1,0 +1,36 @@
+# pkgsrc include file for tool definitions
+
+BASH=				/usr/bin/bash
+
+CONFIG_SHELL?=			${BASH}
+WRAPPER_SHELL?=			${BASH}
+COMMAND_SHELL?=			${BASH}
+
+TOOLS_PATH.ksh=			${TOOLS_PLATFORM.ksh}
+# Avoid SunOS native openssl
+TOOLS_PLATFORM.openssl=		${LOCALBASE}/bin/openssl
+# Avoid these platform tools by default
+TOOLS_PLATFORM.bison=		#
+TOOLS_PLATFORM.yacc=		#
+TOOLS_PLATFORM.m4=		#
+
+# Use the fortran compiler that's part of our GCC suite
+FC=				gfortran
+FCPATH=				${LOCALBASE}/bin/${FC}
+.if !empty(ABI:M64)
+FFLAGS=				-m64
+.endif
+
+FALSE=				/usr/bin/false
+NOLOGIN=			/usr/bin/false
+
+# Fetch consistently using wget
+FETCH_USING=			custom
+.if exists(/usr/bin/wget)
+FETCH_CMD=			/usr/bin/wget
+.elif exists(/usr/sfw/bin/wget)
+FETCH_CMD=			/usr/sfw/bin/wget
+.endif
+FETCH_BEFORE_ARGS=		${PASSIVE_FETCH:D--passive-ftp} --no-check-certificate --timeout=60
+FETCH_RESUME_ARGS=		-c
+FETCH_OUTPUT_ARGS=		-O

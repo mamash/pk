@@ -1,0 +1,4 @@
+bin/gcmp @PREFIX@/bin/cmp
+bin/gdiff @PREFIX@/bin/diff
+bin/gdiff3 @PREFIX@/bin/diff3
+bin/gsdiff @PREFIX@/bin/sdiff

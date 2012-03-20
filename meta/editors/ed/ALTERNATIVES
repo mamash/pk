@@ -1,0 +1,2 @@
+bin/ged @PREFIX@/bin/ed
+bin/gred @PREFIX@/bin/red

@@ -1,0 +1,14 @@
+bin/gaddr2line @PREFIX@/bin/addr2line
+bin/gar @PREFIX@/bin/ar
+bin/gas @PREFIX@/bin/as
+bin/gc++filt @PREFIX@/bin/c++filt
+bin/ggprof @PREFIX@/bin/gprof
+bin/gld @PREFIX@/bin/ld
+bin/gnm @PREFIX@/bin/nm
+bin/gobjcopy @PREFIX@/bin/objcopy
+bin/gobjdump @PREFIX@/bin/objdump
+bin/granlib @PREFIX@/bin/ranlib
+bin/greadelf @PREFIX@/bin/readelf
+bin/gsize @PREFIX@/bin/size
+bin/gstrings @PREFIX@/bin/strings
+bin/gstrip @PREFIX@/bin/strip

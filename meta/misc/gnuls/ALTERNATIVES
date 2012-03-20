@@ -1,0 +1,2 @@
+bin/gdircolors @PREFIX@/bin/dircolors
+bin/gls @PREFIX@/bin/ls
