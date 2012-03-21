@@ -27,8 +27,10 @@ NOLOGIN=			/usr/bin/false
 # Fetch consistently using wget
 FETCH_USING=			custom
 .if exists(/usr/bin/wget)
+# wget on SmartOS
 FETCH_CMD=			/usr/bin/wget
 .elif exists(/usr/sfw/bin/wget)
+# wget on Solaris Nevada and similar
 FETCH_CMD=			/usr/sfw/bin/wget
 .endif
 FETCH_BEFORE_ARGS=		${PASSIVE_FETCH:D--passive-ftp} --no-check-certificate --timeout=60

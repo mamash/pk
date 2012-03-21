@@ -5,9 +5,9 @@
 
 set -o errexit
 
-cur_dir=$(dirname $0)
+pk_dir=$(cd $(dirname $0)/.. && pwd)
 script_name=$(basename $0)
-source ${cur_dir}/common.inc || exit 1
+source ${pk_dir}/lib/common.inc || exit 1
 
 init $@
 

@@ -1,8 +1,5 @@
-# Default path to pkgsrc tree
-PKGSRCDIR?=     	/opt/pkgsrc
-
 # Default path to source distribution files
-DISTDIR?=		/opt/build/distfiles
+DISTDIR?=		${OVERLAY}/distfiles
 
 # Default working directory (where packages are extracted, patched,
 # configured, built etc.
@@ -27,4 +24,4 @@ PREFIX_STRING=		-${LOCALBASE:S/\///:S/\//_/}
 .endif
 
 # Default path where binary packages are created
-PACKAGES=		/opt/build/packages/${PKGRELEASE}/${COMPILER_STRING}${ABI_STRING}${PREFIX_STRING}
+PACKAGES=		${OVERLAY}/packages/${PKGRELEASE}/${COMPILER_STRING}${ABI_STRING}${PREFIX_STRING}

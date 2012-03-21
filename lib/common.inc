@@ -78,9 +78,9 @@ defaults() {
     prefix)     echo '/opt/local';;
     release)    echo "$(cat /opt/pkgsrc/.git/HEAD|awk -F- '{print $2}')";;
     targets)    echo 'common php=52 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31';;
-    build_base) echo '/opt/build';;
+    build_base) echo "${pk_dir}";;
     build_dir)  echo '${build_base}/logs';;
-    overlay)    echo "${cur_dir}";;
+    overlay)    echo "${pk_dir}";;
     package_lists) echo '${overlay}/lists';;
     pkgsrcdir)  echo '/opt/pkgsrc';;
     pkg_dir)    echo '${build_base}/packages/${release}/${build_id}';;
@@ -179,62 +179,6 @@ construct_bmake_env() {
   bmake_env=(${bmake_env[@]} LOCALBASE="${prefix}")
   return 0
 }
-
-fix_pkg_requires() {
-  # Fix known packages
-  # When pkgsrc assembles the binary package file, it loops through the files
-  # using 'ld' to generate REQUIRES entries for the package meta data, to
-  # record shared libraries required (but not provided) by the package.
-  # This fails on packages where e.g. an executable binary links against
-  # a shared lib provided by the said package (because the package files
-  # are not installed in ${PREFIX} yet at this stage.)
-  #
-  # Takes a path to the binary package file as an argument
-
-  local pkgfile=$1
-  local pkgname=$(basename ${pkgfile%\.tgz})
-  local pkgbase=${pkgname%-*}
-  local pkgdbdir=/opt/local/pkg/${pkgname}
-
-  case ${pkgbase} in
-    expat)
-      bad_libs=(/usr/lib/libexpat) ;;
-    libxml2)
-      bad_libs=(/lib/libxml2 /lib/libz) ;;
-    libXpm)
-      bad_libs=(/usr/X11 /usr/lib/libXpm) ;;
-    mDNSResponder)
-      bad_libs=(/usr/lib/libdns) ;;
-    pcre)
-      bad_libs=(/usr/lib/libpcre) ;;
-    poco|ffmpeg)
-      bad_libs=(/tmp) ;;
-    *)
-      return 0 ;;
-  esac
-
-  log "checking ${pkgbase}"
-
-  for lib in ${bad_libs[@]}; do
-    pkg_info -Q REQUIRES ${pkgfile} | grep "^${lib}" >/dev/null
-    if [ $? -eq 0 ]; then
-      log "fixing ${pkgbase}"
-      continue
-      pkg_add ${pkgfile} >/dev/null 2>&1
-      rm /tmp/.pk-build_info 2>/dev/null
-      for lib in ${bad_libs[@]}; do
-        /usr/bin/sed -e "\,REQUIRES=${lib},d" ${pkgdbdir}/+BUILD_INFO \
-          > /tmp/.pk-build_info && \
-          cp -p /tmp/.pk-build_info ${pkgdbdir}/+BUILD_INFO
-      done
-
-      PKG_DBDIR=${prefix}/pkg pkg_tarup -d $(dirname ${pkgfile}) ${pkgbase} >/dev/null 2>&1 || \
-        log "re-packaging failed"
-
-      break
-    fi
-  done
-} 
 
 zfs() {
   if [ "${zfs_control}" == "yes" ]; then
