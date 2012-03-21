@@ -76,7 +76,7 @@ defaults() {
     abi)        echo '32';;
     compiler)   echo 'gcc';;
     prefix)     echo '/opt/local';;
-    release)    echo "$(cat /opt/pkgsrc/.git/HEAD|awk -F- '{print $2}')";;
+    release)    echo "$(cat /opt/pkgsrc/.git/HEAD|sed 's/^.*[_-]//')";;
     targets)    echo 'common php=52 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31';;
     build_base) echo "${pk_dir}";;
     build_dir)  echo '${build_base}/logs';;
