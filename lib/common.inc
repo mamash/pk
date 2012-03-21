@@ -98,7 +98,11 @@ construct_build_id() {
 
   build_id=${compiler_id}${non_def_prefix+-${prefix_string}}${non_def_abi+-${abi}}
   [ "${build_id}" == "${compiler_id}" ] || non_def_build=yes
-  zfs_path=${zfs_base}/${prefix_string}/${release}
+  if [ "${zfs_control}" == "yes" ]; then
+    zfs_path=${zfs_base}/${prefix_string}/${release}
+  else
+    zfs_path='n/a'
+  fi
 }
 
 check_compiler() {
