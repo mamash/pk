@@ -200,7 +200,7 @@ EOF
     [ ${packages} ] && unset packages
 
     log "parsing binary package files"
-    packages=($(pkg_info -Q PKGPATH ${pkg_dir}/All/*.tgz|sort -uf))
+    packages=($(pkg_info -Q PKGPATH ${pkg_dir}/All/*.tgz 2>/dev/null|sort -uf))
 
     log "checking ${#packages[@]} packages..."
 
@@ -256,7 +256,7 @@ EOF
     : ${bad_libs=()}
 
     find_tool pkg_tarup || exit 1
-    cd $(eval echo ${pkg_dir})/All
+    cd $(eval echo ${pkg_dir})/All 2>/dev/null
 
     for pkgfile in *.tgz; do
       pkgname=$(basename ${pkgfile%\.tgz})
@@ -278,7 +278,7 @@ EOF
     # those packages will be ignored when looking
     # for older versions to prune
 
-    cd ${pkg_dir}/All
+    cd ${pkg_dir}/All 2>/dev/null
  
     for file in $(/bin/ls -1 | sed 's/-[^-]*tgz//' | sort | uniq -c | awk '{if ($1 != "1") print $2}'); do
       unset keep remove exception
@@ -322,7 +322,7 @@ EOF
     rm -rf ${pkg_dir}/none
 
     # fix stale symlinks
-    cd ${pkg_dir}
+    cd ${pkg_dir} 2>/dev/null
     for file in $(find . -type l | sort); do
       /usr/bin/file ${file} | grep 'symbolic link' >/dev/null && \
         rm ${file}

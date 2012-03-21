@@ -261,7 +261,7 @@ find_tool() {
 }
 
 list_package_files() {
-  /bin/ls -l ${pkg_dir}/All|sort -f \
+  /bin/ls -l ${pkg_dir}/All 2>/dev/null|sort -f \
     > ${package_log}.$1
 }
 
