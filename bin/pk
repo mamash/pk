@@ -261,7 +261,7 @@ EOF
     for pkgfile in *.tgz; do
       pkgname=$(basename ${pkgfile%\.tgz})
       pkgbase=${pkgname%-*}
-      pkgdbdir=/opt/local/pkg/${pkgname}
+      pkgdbdir=${prefix}/pkg/${pkgname}
 
       for broken_package in ${broken_packages[@]}; do
         if [ ${broken_package} == ${pkgbase} ]; then
