@@ -400,7 +400,6 @@ EOF
       log "couldn't find the bootstrap script. does ${pkgsrcdir} contain the pkgsrc tree?"
       exit 1
     fi
-    check_compiler
     create_prefix
     ${script_name} mount -p ${prefix} -a ${abi} -r ${release} >/dev/null 2>&1
     log "running pkgsrc bootstrap"
@@ -408,7 +407,7 @@ EOF
       rm -rf /tmp/pkgsrc
     fi
     case ${compiler} in
-      sunpro) BOOTSTRAP_ENV="SUNWSPROBASE=${compiler_dir%/bin} CC=cc CXX=CC CPP='cc -E' CXXCPP='CC -E'" ;;
+      sunpro) BOOTSTRAP_ENV="SUNWSPROBASE=${compiler_dir%/bin} CC=cc CXX=CC" ;;
     esac
     /usr/bin/env ${BOOTSTRAP_ENV} ${pkgsrcdir}/bootstrap/bootstrap \
         --prefix ${prefix} \
@@ -450,7 +449,6 @@ OVERLAY=		${overlay}
       pdksh
       pkgin
       pkg_install
-      xz
       zlib
     )
 

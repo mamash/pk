@@ -115,7 +115,7 @@ check_compiler() {
       fi
     elif [ -x ${compiler} ]; then # it's executable
       compiler_dir=$(cd $(dirname ${compiler}) && pwd)
-      compiler_cmd=${compiler_dir}/$(base ${compiler})
+      compiler_cmd=${compiler_dir}/$(basename ${compiler})
     fi
     ;;
   *)
