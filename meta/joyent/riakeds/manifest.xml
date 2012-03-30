@@ -19,7 +19,8 @@
         <envvar name="HOME" value="@SMF_HOME@" />
         <envvar name="LOGNAME" value="@SMF_USER@" />
         <envvar name="PATH" value="/usr/bin:/bin:/opt/local/bin:/opt/local/sbin" />
-        <envvar name="LD_PRELOAD_64" value="@PREFIX@/riak/lib/libumem.so.1" />
+        <envvar name="LD_PRELOAD" value="libumem.so.1" />
+        <envvar name="LD_PRELOAD_64" value="libumem.so.1" />
         <envvar name="UMEM_OPTIONS" value="allocator=best" />
       </method_environment>
     </method_context>
