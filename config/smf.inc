@@ -19,9 +19,7 @@ SMF_USER.couchdb=${COUCH_USER}
 SMF_GROUP.couchdb=${COUCH_GROUP}
 SMF_HOME.couchdb=${COUCH_DBDIR}
 
-SMF_NAME.mysql5-server=mysql
-SMF_NAME.mysql51-server=mysql
-SMF_NAME.mysql55-server=mysql
+SMF_NAME.mysql-server=mysql
 
 SMF_NAME.postgresql84-server=postgresql:pg84
 SMF_NAME.postgresql90-server=postgresql:pg90
@@ -60,3 +58,13 @@ SMF_GROUP.trac=www
 
 SMF_USER.varnish=${VRNUSER}
 SMF_GROUP.varnish=${VRNGROUP}
+
+SMF_USER.riak=${RIAK_USER}
+SMF_GROUP.riak=${RIAK_GROUP}
+SMF_HOME.riak=${RIAK_HOME}
+
+SMF_NAME.riakeds=riak
+SMF_USER.riakeds=${RIAK_USER}
+SMF_GROUP.riakeds=${RIAK_GROUP}
+SMF_HOME.riakeds=${RIAK_HOME}
+
