@@ -1,0 +1,22 @@
+$NetBSD$
+
+--- crypto/aes/Makefile.orig	2008-09-17 17:10:55.000000000 +0000
++++ crypto/aes/Makefile
+@@ -57,8 +57,17 @@ ax86-cof.s: asm/aes-586.pl ../perlasm/x8
+ ax86-out.s: asm/aes-586.pl ../perlasm/x86asm.pl
+ 	(cd asm; $(PERL) aes-586.pl a.out $(CFLAGS) $(PROCESSOR) > ../$@)
+ 
++nx86-elf.s: asm/aesni-x86.pl ../perlasm/x86asm.pl
++	(cd asm; $(PERL) aesni-x86.pl elf $(CFLAGS) $(PROCESSOR) > ../$@)
++nx86-cof.s: asm/aesni-x86.pl ../perlasm/x86asm.pl
++	(cd asm; $(PERL) aesni-x86.pl coff $(CFLAGS) $(PROCESSOR) > ../$@)
++nx86-out.s: asm/aesni-x86.pl ../perlasm/x86asm.pl
++	(cd asm; $(PERL) aesni-x86.pl a.out $(CFLAGS) $(PROCESSOR) > ../$@)
++
+ aes-x86_64.s: asm/aes-x86_64.pl
+ 	$(PERL) asm/aes-x86_64.pl $@
++aesni-x86_64.s: asm/aesni-x86_64.pl
++	$(PERL) asm/aesni-x86_64.pl $@
+ 
+ files:
+ 	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO

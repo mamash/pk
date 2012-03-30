@@ -1,0 +1,12 @@
+$NetBSD$
+
+--- /dev/null
++++ crypto/perlasm/aesni/README
+@@ -0,0 +1,7 @@
++This contains a backported version of the perl routines from OpenSSL 
++1.0.0. The AES-NI support on i386 requires features (like 4-argument 
++support) which were not present in 0.9.8.
++
++We don't just overwrite the versions in the parent directory, 
++although we could do so, because we're trying to keep the AES-NI support 
++patch as unintrusive as possible.

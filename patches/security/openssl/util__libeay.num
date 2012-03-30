@@ -1,0 +1,9 @@
+$NetBSD$
+
+--- util/libeay.num.orig	2010-03-25 12:17:16.000000000 +0000
++++ util/libeay.num
+@@ -3728,3 +3728,4 @@ JPAKE_STEP2_init                        
+ pqueue_size                             4114	EXIST::FUNCTION:
+ OPENSSL_uni2asc                         4115	EXIST:NETWARE:FUNCTION:
+ OPENSSL_asc2uni                         4116	EXIST:NETWARE:FUNCTION:
++ENGINE_load_aesni                       4117	EXIST::FUNCTION:ENGINE
