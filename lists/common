@@ -58,7 +58,6 @@ databases/postgresql91-upgrade
 databases/tokyotyrant
 devel/apache-ant
 devel/apache-maven
-devel/binutils
 devel/bmake
 devel/boost-build
 devel/boost-docs
@@ -124,6 +123,7 @@ fonts/dejavu-ttf
 fonts/gsftopkk
 fonts/ps2pkm
 fonts/t1utils
+geography/gdal-lib
 graphics/GraphicsMagick
 graphics/Mesa
 graphics/dvipng
@@ -357,6 +357,7 @@ textproc/p5-YAML
 textproc/p5-ack
 time/p5-Time-modules
 wip/ap2-xsendfile
+wip/binutils
 wip/discount
 wip/fcgiwrap
 wip/gearmand
