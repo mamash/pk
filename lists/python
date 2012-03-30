@@ -12,6 +12,7 @@ print/py-reportlab
 security/py-crypto
 security/py-denyhosts
 security/py-gnupg
+security/py-oauth
 security/py-openid
 security/py-OpenSSL
 textproc/py-elementtree
