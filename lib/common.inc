@@ -23,7 +23,7 @@ init() {
   
   : ${abi:=$(defaults abi)}
   : ${compiler:=$(defaults compiler)}
-  : ${dir:=$(defaults dir)}
+  : ${repo_dir:=$(defaults repo_dir)}
   : ${prefix:=$(defaults prefix)}
   : ${release:=$(defaults release)}
   : ${build_base:=$(defaults build_base)}
@@ -32,19 +32,21 @@ init() {
   : ${package_lists:=$(defaults package_lists)}
   : ${pkg_dir:=$(defaults pkg_dir)}
   : ${pkgsrcdir:=$(defaults pkgsrcdir)}
-  : ${url:=$(defaults url)}
+  : ${repo_hostname:=$(defaults repo_hostname)}
+  : ${repo_user:=$(defaults repo_user)}
+  : ${repo_url:=$(defaults repo_url)}
   [ ${#targets[@]} -eq 0 ] && targets=($(defaults targets))
   
   while getopts "a:c:d:fo:p:r:u:" option; do
     case ${option} in
       a) abi=${OPTARG} ;;
       c) compiler=${OPTARG} ;;
-      d) dir=${OPTARG} ;;
+      d) repo_dir=${OPTARG} ;;
       f) forced_rebuild=yes ;;
       o) overlay=${OPTARG} ;;
       p) prefix=${OPTARG} ;;
       r) release=${OPTARG} ;;
-      u) url=${OPTARG} ;;
+      u) repo_url=${OPTARG} ;;
       *) echo "Unknown option passed." ;;
     esac
   done
@@ -59,8 +61,8 @@ init() {
   /usr/sbin/zfs get name ${zfs_base} >/dev/null 2>&1 && zfs_control=yes || true
   platform=$([[ $(uname -v) =~ ^joyent ]] && echo sdc6 || echo sdc5)
   construct_build_id
-  repo_dir=$(eval echo ${dir})
-  repo_url=$(eval echo ${url}/${repo_dir})
+  repo_dir=$(eval echo ${repo_dir})
+  repo_url=$(eval echo ${repo_url})
   pkg_dir=$(eval echo ${pkg_dir})
   package_lists=$(eval echo ${package_lists})
   build_dir=$(eval echo ${build_dir})
@@ -84,8 +86,10 @@ defaults() {
     package_lists) echo '${overlay}/lists';;
     pkgsrcdir)  echo '/opt/pkgsrc';;
     pkg_dir)    echo '${build_base}/packages/${release}/${build_id}';;
-    url)        echo 'http://pkgsrc.joyent.com';;
-    dir)        echo '${platform}/${release}/${build_id}';;
+    repo_hostname) echo 'pkgsrc.joyent.com';;
+    repo_user)  echo 'pkgsrc';;
+    repo_url)   echo 'http://${repo_hostname}/${repo_dir}';;
+    repo_dir)   echo '${release}/${build_id}';;
   esac  
 }
 

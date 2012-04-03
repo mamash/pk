@@ -75,6 +75,9 @@ Current setup:
   compiler path    : ${compiler_cmd}
   compiler version : ${compiler_version}
 
+  repository dest  : ${repo_user}@${repo_hostname}:${repo_dir}
+  repository URL   : ${repo_url}
+
 EOF
   ;;
 
@@ -315,9 +318,7 @@ EOF
     find_tool gzip || exit 1
     find_tool rsync || exit 1
 
-    repo_dir=${platform}/${release}/${build_id}
-
-    log "sync for ${release}/${build_id} (${url}/${repo_dir})"
+    log "sync for ${release}/${build_id} (${repo_url})"
 
     rm -rf ${pkg_dir}/none
 
@@ -352,9 +353,9 @@ EOF
 
     log "starting rsync"
     if [ ${repo_dir} ]; then
-      ssh pkgsrc.joyent.com "[ -d /home/pkgsrc/${repo_dir} ] || mkdir -p /home/pkgsrc/${repo_dir}"
+      ssh ${repo_user}@${repo_hostname} "[ -d ${repo_dir} ] || mkdir -p ${repo_dir}"
       ${rsync} -az --delete --rsync-path=/opt/local/bin/rsync \
-        ${pkg_dir}/ pkgsrc.joyent.com:/home/pkgsrc/${repo_dir}/
+        ${pkg_dir}/ ${repo_user}@${repo_hostname}:${repo_dir}/
     fi
   ;;
 
