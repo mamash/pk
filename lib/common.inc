@@ -19,8 +19,9 @@ init() {
   
   shift 1 || true
   
-  [ -f ~/.pk ] && source ~/.pk
+  [ -f ~/.pkrc ] && source ~/.pkrc
   
+  : ${pkgsrcdir:=$(defaults pkgsrcdir)}
   : ${abi:=$(defaults abi)}
   : ${compiler:=$(defaults compiler)}
   : ${repo_dir:=$(defaults repo_dir)}
@@ -31,7 +32,6 @@ init() {
   : ${overlay:=$(defaults overlay)}
   : ${package_lists:=$(defaults package_lists)}
   : ${pkg_dir:=$(defaults pkg_dir)}
-  : ${pkgsrcdir:=$(defaults pkgsrcdir)}
   : ${repo_hostname:=$(defaults repo_hostname)}
   : ${repo_user:=$(defaults repo_user)}
   : ${repo_url:=$(defaults repo_url)}
@@ -57,6 +57,8 @@ init() {
   fi
   check_compiler
   export PATH=${compiler_dir}:${PATH}:${prefix}/bin:${prefix}/sbin
+  abi=$(eval echo ${abi})
+  [ ${abi} ] || abi=32
   zfs_base=zones/$(zonename)/base
   /usr/sbin/zfs get name ${zfs_base} >/dev/null 2>&1 && zfs_control=yes || true
   platform=$([[ $(uname -v) =~ ^joyent ]] && echo sdc6 || echo sdc5)
@@ -70,15 +72,20 @@ init() {
   log_file=${log_dir}/${script_name}.log
   [ ! -d ${log_dir} ] && mkdir -p ${log_dir}
   [ -d "${overlay}" ] || unset ${overlay}
+
+  if [ ! ${pkgsrcdir} ] || [ ! -d ${pkgsrcdir} ]; then
+    log "no pkgsrc tree found. make sure it's available at ${pkgsrcdir} or a path set with 'pkgsrcdir'"
+    exit 1
+  fi
 }
 
 defaults() {
   local var=$1
   case ${var} in
-    abi)        echo '32';;
+    abi)        echo '$(cd ${pkgsrcdir}/devel/bmake; bmake show-var VARNAME=ABI)';;
     compiler)   echo 'gcc';;
     prefix)     echo '/opt/local';;
-    release)    echo "$(cat /opt/pkgsrc/.git/HEAD|sed 's/^.*[_-]//')";;
+    release)    echo "$(cat ${pkgsrcdir}/.git/HEAD|sed 's/^.*[_-]//')";;
     targets)    echo 'common php=52 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31';;
     build_base) echo "${pk_dir}";;
     build_dir)  echo '${build_base}/logs';;
@@ -95,7 +102,7 @@ defaults() {
 
 construct_build_id() {
   # ABI (when non-default)
-  [ ${abi} == $(defaults abi) ] || non_def_abi=yes
+  [ ${abi} == $(eval echo $(defaults abi)) ] || non_def_abi=yes
   # prefix (when non-default, but generate the escaped string anyway)
   [ ${prefix} == $(defaults prefix) ] || non_def_prefix=yes
   prefix_string=${prefix//\//_}; prefix_string=${prefix_string#_}
@@ -127,7 +134,7 @@ check_compiler() {
       studio|CC) compiler=sunpro; compiler_pattern=CC ;;
     esac
     compiler_cmd=$(type -p ${compiler_pattern-${compiler}} || true)
-    if [ -x ${compiler_cmd} ]; then # found
+    if [ ${compiler_cmd} ] && [ -x ${compiler_cmd} ]; then # found
       compiler_dir=$(dirname ${compiler_cmd})
     fi
     ;;

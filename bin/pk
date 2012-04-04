@@ -251,7 +251,7 @@ EOF
   ;;
 
   fix)
-    # Broken packages & bad libs should be defined in ~/.pk
+    # Broken packages & bad libs should be defined in ~/.pkrc
     # The script will loop through broken packages and take out
     # references to bad libs (assuming the linking is actually
     # correct, and the references stale)
@@ -277,7 +277,7 @@ EOF
   ;;
     
   prune)
-    # prune_exceptions should be defined in ~/.pk
+    # prune_exceptions should be defined in ~/.pkrc
     # those packages will be ignored when looking
     # for older versions to prune
 
