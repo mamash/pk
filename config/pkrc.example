@@ -1,0 +1,48 @@
+# .pkrc
+# Uncomment defitions to override defaults
+# Use single quotes to expand variables when everything is defined
+
+# Directory that holds the pkgsrc tree
+# pkgsrcdir=/opt/pkgsrc
+
+# pkgsrc release (e.g. 2011Q4)
+# By default, the current git branch (e.g. pkgsrc_2011Q4) is used as a base
+# release=2011Q4
+
+# Default prefix to build for
+# prefix=/opt/local
+
+# The 'overlay' directory that holds the ${overlay}/config/fragment.mk file
+# Defaults to wherever 'pk' was installed
+# overlay='${pk_dir}'
+
+# The directory to hold binary packages
+# Will start at /opt/pk/packages by default and create directories in
+# the 2011Q4/gcc46 kind of pattern automatically
+# pkg_dir='${pk_dir}/packages/${release}/${build_id}'
+
+# The directory that holds package lists
+# package_lists=${overlay}/lists
+
+# Default hostname to rsync packages to
+# repo_hostname=pkgsrc.joyent.com
+
+# Remote user to use for the rsync
+# repo_user=pkgsrc
+
+# Relative directory where packages are to be sync'ed
+# Defaults to a 2011Q4/gcc46 kind of pattern
+# repo_dir='${release}/${build_id}'
+
+# The URL of the remote package set as served by the web server
+# repo_url='http://${repo_hostname}/${repo_dir}'
+
+# Default compiler to use ('gcc' or 'sunpro', can be a full path, too)
+# compiler=gcc
+
+# ABI to build for (32 or 64)
+# Defaults to use what pkgsrc already has (via /opt/local/etc/mk.conf)
+# abi=64
+
+# Default build targets if none are passed to 'pk build'
+# targets='common php=52 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31'
