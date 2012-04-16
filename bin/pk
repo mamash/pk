@@ -430,7 +430,7 @@ OVERLAY=		${overlay}
     touch ${prefix}/.dlj_license_accepted
 
     snapshot_prefix bootstrap
-    log "all done; now build gcc-runtime, gcc-compiler and create the @start snapshot"
+    log "all done; now build gcc-runtime, gcc-compiler and create the @build snapshot"
   ;;
 
   bootstrap)
