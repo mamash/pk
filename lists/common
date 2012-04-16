@@ -186,6 +186,7 @@ mail/imapsync
 mail/maildrop
 mail/mailman
 mail/milter-greylist
+mail/msmtp
 mail/mutt-devel
 mail/p5-MIME-Charset
 mail/p5-MIME-Lite-HTML
