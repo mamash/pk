@@ -41,7 +41,7 @@ PKG_OPTIONS.gmp=		-gmp-fat
 PKG_OPTIONS.gtk2=		x11
 PKG_OPTIONS.wxGTK28=		unicode
 PKG_OPTIONS.ghostscript=	#
-PKG_OPTIONS.erlang=		iodbc
+PKG_OPTIONS.erlang=		unixodbc
 PKG_OPTIONS.tidy=		-doc
 PKG_OPTIONS.x264-devel=		-threads
 PKG_OPTIONS.screen=		ncurses
@@ -179,3 +179,15 @@ MUNIN_RUN=			/var/munin/run
 
 #bind
 BIND_DIR=			/var/named
+
+#jabber related packages
+JABBER_USER=			ejabberd
+JABBER_GROUP=			ejabberd
+EJABBERD_USER=			${JABBER_USER}
+EJABBERD_GROUP=			${JABBER_GROUP}
+
+#spectrum
+SPECTRUM_RUN=			/var/db/spectrum
+SPECTRUM_DB=			/var/db/spectrum
+SPECTRUM_LOG=			/var/log/spectrum
+
