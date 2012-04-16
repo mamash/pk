@@ -68,9 +68,13 @@ init() {
   pkg_dir=$(eval echo ${pkg_dir})
   package_lists=$(eval echo ${package_lists})
   build_dir=$(eval echo ${build_dir})
-  log_dir=${build_dir}/$(now)_${cmd}_${build_id}
-  log_file=${log_dir}/${script_name}.log
-  [ ! -d ${log_dir} ] && mkdir -p ${log_dir}
+  case ${cmd} in
+    build|init)
+      log_dir=${build_dir}/$(now)_${cmd}_${build_id}
+      log_file=${log_dir}/${script_name}.log
+      [ ! -d ${log_dir} ] && mkdir -p ${log_dir}
+    ;;
+  esac
   [ -d "${overlay}" ] || unset ${overlay}
 
   if [ ! ${pkgsrcdir} ] || [ ! -d ${pkgsrcdir} ]; then
@@ -105,12 +109,13 @@ construct_build_id() {
   [ ${abi} == $(eval echo $(defaults abi)) ] || non_def_abi=yes
   # prefix (when non-default, but generate the escaped string anyway)
   [ ${prefix} == $(defaults prefix) ] || non_def_prefix=yes
-  prefix_string=${prefix//\//_}; prefix_string=${prefix_string#_}
+  prefix_string=${prefix//\//_}
+  prefix_string=${prefix_string#_}
 
-  build_id=${compiler_id}${non_def_prefix+-${prefix_string}}${non_def_abi+-${abi}}
+  build_id=${compiler_id}_${abi}${non_def_prefix+_${prefix_string}}
   [ "${build_id}" == "${compiler_id}" ] || non_def_build=yes
   if [ "${zfs_control}" == "yes" ]; then
-    zfs_path=${zfs_base}/${prefix_string}/${release}
+    zfs_path=${zfs_base}/${prefix_string}/${release}_${abi}
   else
     zfs_path='n/a'
   fi
@@ -221,7 +226,7 @@ create_prefix() {
 
 snapshot_prefix() {
   snapshot=${1}
-  if [ ${snapshot} ]; then
+  if [ ! ${snapshot} ]; then
     return 1
   fi
   log "creating a ${snapshot} snapshot"
