@@ -10,10 +10,11 @@ SMF_HOME.postgrey=${POSTGREY_DBDIR}
 
 SMF_USER.memcached=${MEMCACHED_USER}
 
-SMF_NAME.ejabberd=jabber:ejabberd
 SMF_HOME.ejabberd=${EJABBERD_DB}
-SMF_USER.ejabberd=${EJABBERD_USER}
-SMF_GROUP.ejabberd=${EJABBERD_GROUP}
+SMF_USER.ejabberd=${JABBER_USER}
+SMF_GROUP.ejabberd=${JABBER_GROUP}
+SMF_USER.spectrum=${JABBER_USER}
+SMF_GROUP.spectrum=${JABBER_GROUP}
 
 SMF_USER.couchdb=${COUCH_USER}
 SMF_GROUP.couchdb=${COUCH_GROUP}
