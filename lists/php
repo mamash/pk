@@ -7,7 +7,6 @@ databases/phppgadmin
 devel/php-memcache
 joyent/pear-MDB2_Driver_pdoSqlite
 joyent/php-mailparse
-joyent/php-memcached2
 joyent/php-sphinx
 joyent/php-sqlrelay
 security/php-suhosin
