@@ -13,6 +13,10 @@ TOOLS_PLATFORM.openssl=		${LOCALBASE}/bin/openssl
 TOOLS_PLATFORM.bison=		#
 TOOLS_PLATFORM.yacc=		#
 TOOLS_PLATFORM.m4=		#
+TOOLS_PLATFORM.strip=		/usr/bin/strip
+TOOLS_PLATFORM.tsort=		/usr/bin/tsort
+
+PKG_LD=				/usr/bin/ld
 
 # Use the fortran compiler that's part of our GCC suite
 FC=				gfortran
