@@ -4,7 +4,7 @@ USE_NATIVE_GCC?=	yes
 # We use x86_64 to identify 64bit packages
 # (upstream pkgsrc still uses i386 for both Intel archs on SunOS)
 .if defined(ABI) && ${ABI} == 64
-ABI_STRING=		-${ABI}
+ABI_STRING=		_${ABI}
 MACHINE_ARCH=		x86_64
 .endif
 
