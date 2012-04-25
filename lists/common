@@ -79,6 +79,7 @@ devel/libthrift
 devel/lua-stdlib
 devel/memcached
 devel/monotone
+devel/ncursesw
 devel/p5-Algorithm-C3
 devel/p5-Array-Compare
 devel/p5-Cache-Memcached
@@ -385,6 +386,7 @@ wip/sphinxsearch
 wip/syslog-ng2
 wip/tftp-hpa
 wip/yaws
+wip/zookeeper-server
 www/analog
 www/ap2-auth-external
 www/ap2-auth-mysql
