@@ -83,6 +83,8 @@ PKG_OPTIONS.php=		readline
 PKG_OPTIONS.MesaLib=		dri
 PKG_OPTIONS.wireshark=		-gtk2
 PKG_OPTIONS.milter-greylist=	postfix-milter
+PKG_OPTIONS.gcc47=		-gcc-go
+PKG_OPTIONS.doxygen=		-latex
 
 # Package specific configuration options
 
@@ -191,3 +193,5 @@ SPECTRUM_RUN=			/var/db/spectrum
 SPECTRUM_DB=			/var/db/spectrum
 SPECTRUM_LOG=			/var/log/spectrum
 
+#zookeeper
+ZK_RUN=				/var/db/zookeeper
