@@ -69,3 +69,6 @@ SMF_USER.riakeds=${RIAK_USER}
 SMF_GROUP.riakeds=${RIAK_GROUP}
 SMF_HOME.riakeds=${RIAK_HOME}
 
+SMF_NAME.zookeeper-server=zookeeper
+SMF_USER.zookeeper-server=${ZK_USER}
+SMF_GROUP.zookeeper-server=${ZK_GROUP}
