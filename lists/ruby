@@ -10,8 +10,6 @@ databases/ruby-sqlite3
 devel/ruby-debug
 devel/ruby-flexmock
 devel/ruby-gemcutter
-devel/ruby-gettext-activerecord
-devel/ruby-gettext-rails
 devel/ruby-heckle
 devel/ruby-lockfile
 devel/ruby-log4r
