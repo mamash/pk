@@ -4,12 +4,16 @@ USE_NATIVE_GCC?=	yes
 # We use x86_64 to identify 64bit packages
 # (upstream pkgsrc still uses i386 for both Intel archs on SunOS)
 .if defined(ABI) && ${ABI} == 64
-ABI_STRING=		_${ABI}
 MACHINE_ARCH=		x86_64
 .endif
 
+ABI_STRING=		_${ABI}
+
 # Optimize to -O2 by default
 CFLAGS+=		-O2
+
+# Parallel make jobs
+MAKE_JOBS=		4
 
 # The Sun linker on Illumos based SunOS flavors is much more reliable
 # with -shared rather than -G. Sadly -shared is not supported on
