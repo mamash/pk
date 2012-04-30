@@ -28,7 +28,7 @@ CDDL HEADER END
 -->
 <!-- Portions Copyright 2007 Vedran Bender -->
 <service_bundle type='manifest' name='dns-server'>
-  <service name='network/@SMF_NAME@' type='service' version='1'>
+  <service name='smartos/@SMF_NAME@' type='service' version='1'>
     <dependency name='filesystem_minimal' grouping='require_all' restart_on='none' type='service'>
       <service_fmri value='svc:/system/filesystem/local' />
     </dependency>
