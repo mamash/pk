@@ -19,9 +19,9 @@ DEF_PREFIX=		/opt/local
 # to make the build stand out
 .if !empty(DEF_PREFIX)
 . if ${LOCALBASE} != ${DEF_PREFIX}
-PREFIX_STRING=		-${LOCALBASE:S/\///:S/\//_/}
+PREFIX_STRING=		.${LOCALBASE:S/\///:S/\//_/}
 . endif
 .endif
 
 # Default path where binary packages are created
-PACKAGES=		${OVERLAY}/packages/${PKGRELEASE}/${COMPILER_STRING}${ABI_STRING}${PREFIX_STRING}
+PACKAGES=		${OVERLAY}/packages/${PKGRELEASE}/${MACHINE_ARCH}${PREFIX_STRING}

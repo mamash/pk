@@ -14,8 +14,11 @@ ABI_STRING=		_${ABI}
 # Optimize to -O2 by default
 CFLAGS+=		-O2
 
+# Ignore out-of-scope definition errors
+CFLAGS+=		-fpermissive
+
 # Parallel make jobs
-MAKE_JOBS=		4
+MAKE_JOBS=		8
 
 # The Sun linker on Illumos based SunOS flavors is much more reliable
 # with -shared rather than -G. Sadly -shared is not supported on
