@@ -247,7 +247,7 @@ mount_prefix() {
 }
 
 cleanup() {
-  zfs rollback ${zfs_path}@start
+  zfs rollback ${zfs_path}@build
   if [ -d /tmp/pkgsrc ]; then
     rm -rf /tmp/pkgsrc
   fi
