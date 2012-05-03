@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <service_bundle type='manifest' name='export'>
-  <service name='smartos/denyhosts' type='service' version='0'>
+  <service name='pkgsrc/@SMF_NAME@' type='service' version='0'>
     <create_default_instance enabled='true' />
     <single_instance />
     <dependency name='network' grouping='require_all' restart_on='error' type='service'>
@@ -16,7 +16,7 @@
     <dependency name='config-file' grouping='require_all' restart_on='refresh' type='path'>
       <service_fmri value='file://localhost@PKG_SYSCONFDIR@/denyhosts.conf' />
     </dependency>
-    <exec_method name='start' type='method' exec='@LOCALBASE@/bin/denyhosts.py --config=%{config_file} --daemon' timeout_seconds='60' />
+    <exec_method name='start' type='method' exec='@PREFIX@/bin/denyhosts.py --config=%{config_file} --daemon' timeout_seconds='60' />
     <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60' />
     <property_group name='startd' type='framework'>
       <propval name='ignore_error' type='astring' value='core,signal' />

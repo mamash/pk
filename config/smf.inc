@@ -16,15 +16,35 @@ SMF_GROUP.ejabberd=${JABBER_GROUP}
 SMF_USER.spectrum=${JABBER_USER}
 SMF_GROUP.spectrum=${JABBER_GROUP}
 
+SMF_NAME.py27-jabber-aimt=jabber
+SMF_INSTANCE.py27-jabber-aimt=aim
+SMF_USER.py27-jabber-aimt=${JABBER_USER}
+SMF_GROUP.py27-jabber-aimt=${JABBER_GROUP}
+SMF_NAME.py27-jabber-icqt=jabber
+SMF_INSTANCE.py27-jabber-icqt=icq
+SMF_USER.py27-jabber-icqt=${JABBER_USER}
+SMF_GROUP.py27-jabber-icqt=${JABBER_GROUP}
+SMF_NAME.py27-jabber-msnt=jabber
+SMF_INSTANCE.py27-jabber-msnt=msn
+SMF_USER.py27-jabber-msnt=${JABBER_USER}
+SMF_GROUP.py27-jabber-msnt=${JABBER_GROUP}
+SMF_NAME.py27-jabber-yahoo-transport=jabber
+SMF_INSTANCE.py27-jabber-yahoo-transport=yahoo
+SMF_USER.py27-jabber-yahoo-transport=${JABBER_USER}
+SMF_GROUP.py27-jabber-yahoo-transport=${JABBER_GROUP}
+
 SMF_USER.couchdb=${COUCH_USER}
 SMF_GROUP.couchdb=${COUCH_GROUP}
 SMF_HOME.couchdb=${COUCH_DBDIR}
 
 SMF_NAME.mysql-server=mysql
 
-SMF_NAME.postgresql84-server=postgresql:pg84
-SMF_NAME.postgresql90-server=postgresql:pg90
-SMF_NAME.postgresql91-server=postgresql:pg91
+SMF_NAME.postgresql84-server=postgresql
+SMF_INSTANCE.postgresql84-server=pg84
+SMF_NAME.postgresql90-server=postgresql
+SMF_INSTANCE.postgresql90-server=pg90
+SMF_NAME.postgresql91-server=postgresql
+SMF_INSTANCE.postgresql91-server=pg91
 
 SMF_NAME.erlang=epmd
 
@@ -32,7 +52,10 @@ SMF_NAME.amavisd-new=amavisd
 SMF_USER.amavisd-new=${AMAVIS_USER}
 SMF_GROUP.amavisd-new=${AMAVIS_GROUP}
 
-SMF_NAME.courier-imap=courier:imap
+SMF_NAME.courier-imap=courier
+SMF_INSTANCE.courier-imap=imap
+SMF_NAME.courier-authlib=courier
+SMF_INSTANCE.courier-imap=authlib
 
 SMF_NAME.bind=dns/server
 
@@ -45,8 +68,6 @@ SMF_HOME.rabbitmq=${RMQ_DIR}
 SMF_USER.clamav=${CLAMAV_USER}
 SMF_GROUP.clamav=${CLAMAV_GROUP}
 SMF_HOME.clamav=${CLAMAV_DBDIR}
-
-SMF_NAME.courier-authlib=courier:authlib
 
 SMF_NAME.py27-denyhosts=denyhosts
 
@@ -72,3 +93,11 @@ SMF_HOME.riakeds=${RIAK_HOME}
 SMF_NAME.zookeeper-server=zookeeper
 SMF_USER.zookeeper-server=${ZK_USER}
 SMF_GROUP.zookeeper-server=${ZK_GROUP}
+
+SMF_NAME.nodejs=node
+
+SMF_NAME.sphinxsearch=sphinx
+
+SMF_NAME.mDNSResponder=mdnsresponder
+
+SMF_NAME.php53-fpm=php-fpm

@@ -1,13 +1,13 @@
 <?xml version='1.0'?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <service_bundle type='manifest' name='export'>
-  <service name='smartos/memcached' type='service' version='0'>
+  <service name='pkgsrc/@SMF_NAME@' type='service' version='0'>
     <create_default_instance enabled='false' />
     <single_instance />
     <dependency name='loopback' grouping='require_all' restart_on='error' type='service'>
       <service_fmri value='svc:/network/loopback:default' />
     </dependency>
-    <exec_method name='start' type='method' exec='@LOCALBASE@/bin/memcached -d -u %{config/user} -l %{config/listen_ip} -m %{config/memory}' timeout_seconds='30'>
+    <exec_method name='start' type='method' exec='@PREFIX@/bin/memcached -d -u %{config/user} -l %{config/listen_ip} -m %{config/memory}' timeout_seconds='30'>
       <method_context>
         <method_environment>
           <envvar name='EVENT_NOEVPORT' value='1' />

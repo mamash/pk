@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <service_bundle type='manifest' name='Tracd'>
-  <service name='smartos/trac' type='service' version='1'>
+  <service name='pkgsrc/@SMF_NAME@' type='service' version='1'>
     <dependency name='network' grouping='require_all' restart_on='error' type='service'>
      <service_fmri value='svc:/milestone/network:default' />
     </dependency>
@@ -11,10 +11,10 @@
     <method_context>
      <method_credential user='@SMF_USER@' group='@SMF_USER@' />
      <method_environment>
-      <envvar name='PATH' value='@LOCALBASE@/bin:@LOCALBASE@/sbin:/usr/sbin:/usr/bin' />
+      <envvar name='PATH' value='@PREFIX@/bin:@PREFIX@/sbin:/usr/sbin:/usr/bin' />
      </method_environment>
     </method_context>
-    <exec_method type='method' name='start' exec='@LOCALBASE@/bin/tracd -d -p %{config/port} -b %{config/listen_ip} -e %{config/home}' timeout_seconds='60' />
+    <exec_method type='method' name='start' exec='@PREFIX@/bin/tracd -d -p %{config/port} -b %{config/listen_ip} -e %{config/home}' timeout_seconds='60' />
     <exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
 
     <!-- repeat this block for more instances -->

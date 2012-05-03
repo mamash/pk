@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <service_bundle type='manifest' name='postgresql'>
-  <service name='smartos/postgresql' type='service' version='1'>
+  <service name='pkgsrc/@SMF_NAME@' type='service' version='1'>
     <dependency name='network' grouping='require_all' restart_on='none' type='service'>
       <service_fmri value='svc:/milestone/network:default' />
     </dependency>
@@ -14,7 +14,7 @@
         <envvar name="LD_PRELOAD_32" value="/usr/lib/extendedFILE.so.1" />
       </method_environment>
     </method_context>
-    <instance name='pg91' enabled='false'>
+    <instance name='@SMF_INSTANCE@' enabled='false'>
       <exec_method type='method' name='start' exec='@PREFIX@/@SMF_METHOD_FILE@ start' timeout_seconds='300' />
       <exec_method type='method' name='stop' exec='@PREFIX@/@SMF_METHOD_FILE@ stop' timeout_seconds='300' />
       <exec_method type='method' name='refresh' exec='@PREFIX@/@SMF_METHOD_FILE@ refresh' timeout_seconds='60' />

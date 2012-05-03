@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <service_bundle type="manifest" name="nodejs">
-  <service name="smartos/node" type="service" version="1">
+  <service name="pkgsrc/@SMF_NAME@" type="service" version="1">
     <dependency name="network" grouping="require_all" restart_on="refresh" type="service">
       <service_fmri value="svc:/milestone/network:default" />
     </dependency>

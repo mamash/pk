@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <service_bundle type='manifest' name='export'>
-  <service name='smartos/courier' type='service' version='0'>
+  <service name='pkgsrc/@SMF_NAME@' type='service' version='0'>
     <dependency name='fs-local' grouping='require_all' restart_on='none' type='service'>
       <service_fmri value='svc:/system/filesystem/local' />
     </dependency>
@@ -11,7 +11,7 @@
     <dependency name='system-log' grouping='optional_all' restart_on='none' type='service'>
       <service_fmri value='svc:/system/system-log' />
     </dependency>
-    <instance name='imap' enabled='false'>
+    <instance name='@SMF_INSTANCE@' enabled='false'>
       <dependency name='config-files' grouping='require_any' restart_on='refresh' type='path'>
         <service_fmri value='file://localhost@PKG_SYSCONFDIR@/pop3d-ssl' />
         <service_fmri value='file://localhost@PKG_SYSCONFDIR@/pop3d' />
