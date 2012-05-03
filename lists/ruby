@@ -19,6 +19,7 @@ devel/ruby-mocha
 devel/ruby-needle
 devel/ruby-rcov
 devel/ruby-rcsparse
+devel/ruby-rspec
 devel/ruby-subversion
 devel/ruby-validatable
 finance/ruby-activemerchant
