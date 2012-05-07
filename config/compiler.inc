@@ -15,7 +15,7 @@ ABI_STRING=		_${ABI}
 CFLAGS+=		-O2
 
 # Ignore out-of-scope definition errors
-CFLAGS+=		-fpermissive
+CXXFLAGS+=		-fpermissive
 
 # Parallel make jobs
 MAKE_JOBS=		8
