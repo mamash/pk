@@ -136,7 +136,6 @@ graphics/graphviz
 graphics/jhead
 graphics/ocrad
 graphics/p5-GraphViz2
-graphics/p5-Lingua-Identify
 graphics/p5-PerlMagick
 graphics/tex-a2ping
 joyent/GeoLiteCity
@@ -224,7 +223,7 @@ multimedia/ffmpeg
 multimedia/gpac
 multimedia/libdvdnav
 multimedia/ming
-net/bind98
+net/bind99
 net/gnetcat
 net/haproxy
 net/libpcap
@@ -347,6 +346,7 @@ textproc/ispell-slovak
 textproc/ispell-spanish
 textproc/ispell-svenska
 textproc/nbsed
+textproc/p5-Lingua-Identify
 textproc/p5-Lingua-Stem
 textproc/p5-Pod-Readme
 textproc/p5-Pod-Simple
