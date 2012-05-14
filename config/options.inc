@@ -85,6 +85,7 @@ PKG_OPTIONS.wireshark=		-gtk2
 PKG_OPTIONS.milter-greylist=	postfix-milter
 PKG_OPTIONS.gcc47=		-gcc-go
 PKG_OPTIONS.doxygen=		-latex
+PKG_OPTIONS.openvpn=		pam
 
 # Package specific configuration options
 
