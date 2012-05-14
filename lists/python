@@ -18,6 +18,7 @@ security/py-OpenSSL
 textproc/py-elementtree
 textproc/py-expat
 textproc/py-libxml2
+textproc/py-xml
 textproc/py-yaml
 time/py-dateutil
 time/py-mxDateTime

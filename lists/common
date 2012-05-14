@@ -2,6 +2,7 @@ archivers/arc
 archivers/bsdtar
 archivers/cabextract
 archivers/freeze
+archivers/gcpio
 archivers/gtar-base
 archivers/gzip
 archivers/lzop
@@ -9,6 +10,7 @@ archivers/p7zip
 archivers/pax
 archivers/pbzip2
 archivers/pigz
+archivers/gsharutils
 archivers/unarj
 archivers/unrar
 archivers/unzip
@@ -63,12 +65,14 @@ devel/boost-build
 devel/boost-docs
 devel/boost-libs
 devel/bzr
+devel/cppunit
 devel/cscope
 devel/cvsps
 devel/epydoc
 devel/fossil
 devel/fromcvs
 devel/gettext
+devel/gindent
 devel/gmake
 devel/gperf
 devel/hg-git
@@ -79,6 +83,7 @@ devel/libthrift
 devel/lua-stdlib
 devel/memcached
 devel/monotone
+devel/nbpatch
 devel/ncursesw
 devel/p5-Algorithm-C3
 devel/p5-Array-Compare
@@ -139,8 +144,10 @@ graphics/p5-GraphViz2
 graphics/p5-PerlMagick
 graphics/tex-a2ping
 joyent/GeoLiteCity
+joyent/changepass
 joyent/enstratus-agent
 joyent/gdb7
+joyent/genbfpw
 joyent/joyent-tools
 joyent/nodejs
 joyent/p5-Cache-Memcached-Fast
@@ -207,6 +214,7 @@ mail/spamassassin
 mail/spamprobe
 math/R
 math/fftw
+math/units
 meta-pkgs/modular-xorg-fonts
 meta-pkgs/php5-extensions
 meta-pkgs/php53-extensions
@@ -229,7 +237,7 @@ net/haproxy
 net/libpcap
 net/mrtg
 net/mtr
-net/nagios-imagepak-base
+net/nagios-base
 net/nagios-nrpe
 net/nagios-nsca
 net/nagios-plugin-ldap
@@ -237,7 +245,9 @@ net/nagios-plugin-mysql
 net/nagios-plugin-pgsql
 net/nagios-plugin-snmp
 net/ncftp3
+net/netatalk
 net/netcat6
+net/openvpn
 net/p5-IP-Country
 net/p5-Net
 net/p5-Net-CIDR-Lite
@@ -245,6 +255,7 @@ net/p5-Net-FTPSSL
 net/p5-Net-Ident
 net/p5-Net-OpenID-Consumer
 net/proftpd
+net/quagga
 net/rabbitmq
 net/rdist6
 net/rsync
@@ -252,15 +263,19 @@ net/tnftp
 net/unison
 net/vsftpd
 net/wget
+net/wireshark
 parallel/clusterit
 parallel/ganglia-monitor-core
 pkgtools/autoswc
 pkgtools/bootstrap-extras
 pkgtools/bootstrap-mk-files
+pkgtools/digest
 pkgtools/libnbcompat
 pkgtools/pbulk
 pkgtools/pkg_alternatives
+pkgtools/pkg_developer
 pkgtools/pkg_install
+pkgtools/pkg_install-info
 pkgtools/pkg_notify
 pkgtools/pkg_rolling-replace
 pkgtools/pkgclean
@@ -352,6 +367,7 @@ textproc/p5-Pod-Readme
 textproc/p5-Pod-Simple
 textproc/p5-String-Approx
 textproc/p5-String-ShellQuote
+textproc/p5-Text-Ngram
 textproc/p5-XML-Feed
 textproc/p5-XML-LibXSLT
 textproc/p5-XML-Twig
@@ -373,6 +389,7 @@ wip/mtop
 wip/munin-master
 wip/munin-node
 wip/mysql-sphinxse
+wip/p5-Frontier-RPC
 wip/p5-Imager
 wip/p5-JavaScript-SpiderMonkey
 wip/pagetools
@@ -386,6 +403,7 @@ wip/sphinxsearch
 wip/syslog-ng2
 wip/tftp-hpa
 wip/yaws
+wip/zookeeper-client
 wip/zookeeper-server
 www/analog
 www/ap2-auth-external

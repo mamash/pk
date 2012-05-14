@@ -9,6 +9,7 @@ joyent/pear-MDB2_Driver_pdoSqlite
 joyent/php-mailparse
 joyent/php-sphinx
 joyent/php-sqlrelay
+net/php-geoip
 security/php-suhosin
 textproc/php-pspell
 wip/php-dtrace
