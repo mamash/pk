@@ -442,7 +442,7 @@ OVERLAY=		${overlay}
       bmake
       bootstrap-mk-files
       bzip2
-      gcc-runtime
+      gcc47-runtime
       install-sh
       libarchive
       nawk
@@ -450,6 +450,7 @@ OVERLAY=		${overlay}
       pdksh
       pkgin
       pkg_install
+      pkg_install-info
       zlib
     )
 
@@ -459,7 +460,6 @@ OVERLAY=		${overlay}
 	${prefix}/etc/mk.conf
 	${prefix}/etc/pkg_install.conf
 	${prefix}/etc/pkgin
-	${prefix}/pkg/pkgdb.byfile.db
 	EOF
     for pkg in ${bootstrap_pkgs[@]}; do
       if ! pkg_info -q -e ${pkg}; then
