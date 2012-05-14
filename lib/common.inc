@@ -59,10 +59,16 @@ init() {
   export PATH=${compiler_dir}:${PATH}:${prefix}/bin:${prefix}/sbin
   abi=$(eval echo ${abi})
   [ ${abi} ] || abi=32
+  if [ ${abi} == 64 ]; then
+    arch=x86_64
+  else
+    arch=i386
+  fi
   zfs_base=zones/$(zonename)/base
   /usr/sbin/zfs get name ${zfs_base} >/dev/null 2>&1 && zfs_control=yes || true
   platform=$([[ $(uname -v) =~ ^joyent ]] && echo sdc6 || echo sdc5)
-  construct_build_id
+  construct_build_vars
+  build_id=$(eval echo ${build_id})
   repo_dir=$(eval echo ${repo_dir})
   repo_url=$(eval echo ${repo_url})
   pkg_dir=$(eval echo ${pkg_dir})
@@ -75,6 +81,11 @@ init() {
       [ ! -d ${log_dir} ] && mkdir -p ${log_dir}
     ;;
   esac
+  if [ "${zfs_control}" == "yes" ]; then
+    zfs_path=${zfs_base}/${prefix_string}/${release}_${abi}
+  else
+    zfs_path='n/a'
+  fi
   [ -d "${overlay}" ] || unset ${overlay}
 
   if [ ! ${pkgsrcdir} ] || [ ! -d ${pkgsrcdir} ]; then
@@ -104,21 +115,17 @@ defaults() {
   esac  
 }
 
-construct_build_id() {
+construct_build_vars() {
   # ABI (when non-default)
   [ ${abi} == $(eval echo $(defaults abi)) ] || non_def_abi=yes
+
   # prefix (when non-default, but generate the escaped string anyway)
   [ ${prefix} == $(defaults prefix) ] || non_def_prefix=yes
   prefix_string=${prefix//\//_}
   prefix_string=${prefix_string#_}
 
-  build_id=${compiler_id}_${abi}${non_def_prefix+_${prefix_string}}
   [ "${build_id}" == "${compiler_id}" ] || non_def_build=yes
-  if [ "${zfs_control}" == "yes" ]; then
-    zfs_path=${zfs_base}/${prefix_string}/${release}_${abi}
-  else
-    zfs_path='n/a'
-  fi
+
 }
 
 check_compiler() {
