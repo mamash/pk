@@ -128,16 +128,38 @@ EOF
       skipped=0
 
       log "* ${build_set}${version_string:+ (${version_string})}"
+
       for package in ${packages[@]}; do
-        package_log=${log_dir}/${log_subdir}/${package/\//_}${log_version}
+        for part in ${package//${list_item_separator}/ }; do
+          case ${part} in
+            [+-]*)
+              package_options=(${package_options[@]} ${part#+}) ;;
+            =*)
+              bmake_env=(${bmake_env[@]} ${part#=}) ;;
+            *)
+              package_path=${part} ;;
+          esac
+        done
+
+        package_log=${log_dir}/${log_subdir}/${package_path/\//_}${log_version}
         [ -d $(dirname ${package_log}) ] || mkdir $(dirname ${package_log})
-        if [ -d ${pkgsrcdir}/${package} ]; then
-          cd ${pkgsrcdir}/${package}
+
+        if [ -d ${pkgsrcdir}/${package_path} ]; then
+          cd ${pkgsrcdir}/${package_path}
         else
-          log "  skipped missing ${package}"
+          log "  skipped missing ${package_path}"
           cleanup
           continue
         fi
+
+        if [ ${package_options} ]; then
+          package_option_var=$(bmake ${bmake_env[@]} show-var VARNAME=PKG_OPTIONS_VAR)
+          if [ ${package_option_var} ]; then
+            bmake_env=(${bmake_env[@]} ${package_option_var}=${package_options[@]})
+          fi
+          unset package_options
+        fi
+
         if [ ! ${forced_rebuild} ] && \
            [ -f $(bmake ${bmake_env[@]} show-var VARNAME=PKGFILE) ]
         then
@@ -149,7 +171,7 @@ EOF
         fi
 
         trap "log '!!! TERM caught'; cleanup; exit" INT TERM
-        log "  * ${package}: start"
+        log "  * ${package_path}: start"
 
         status=0
         > ${package_log}.log
@@ -165,7 +187,7 @@ EOF
         rm ${package_log}.{ante,post} 2>/dev/null
 
         if [ ${status} -eq 0 ]; then
-          log "    ${package}: BUILD_OK"
+          log "    ${package_path}: BUILD_OK"
           [ -f ${package_log}.log ] && rm ${package_log}.log
         else
           failed_package=$(/usr/bin/grep 'stopped in' ${package_log}.log | \
@@ -177,9 +199,9 @@ EOF
           else
             fail_reason=BUILD_FAILED
           fi
-          log "    ${package}: ${fail_reason}${failed_package:+ in ${failed_package% }}"
+          log "    ${package_path}: ${fail_reason}${failed_package:+ in ${failed_package% }}"
         fi
-	[ -n "${diff_files}" ] && log "    ${package}: changed package files: ${diff_files}"
+	[ -n "${diff_files}" ] && log "    ${package_path}: changed package files: ${diff_files}"
         trap - INT TERM
         cleanup
       done

@@ -31,6 +31,7 @@ init() {
   : ${build_dir:=$(defaults build_dir)}
   : ${overlay:=$(defaults overlay)}
   : ${package_lists:=$(defaults package_lists)}
+  : ${list_item_separator:=$(defaults list_item_separator)}
   : ${pkg_dir:=$(defaults pkg_dir)}
   : ${repo_hostname:=$(defaults repo_hostname)}
   : ${repo_user:=$(defaults repo_user)}
@@ -106,6 +107,7 @@ defaults() {
     build_dir)  echo '${build_base}/logs';;
     overlay)    echo "${pk_dir}";;
     package_lists) echo '${overlay}/lists';;
+    list_item_separator) echo '%';;
     pkgsrcdir)  echo '/opt/pkgsrc';;
     pkg_dir)    echo '${build_base}/packages/${release}/${build_id}';;
     repo_hostname) echo 'pkgsrc.joyent.com';;
