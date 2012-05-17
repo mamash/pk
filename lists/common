@@ -177,8 +177,12 @@ lang/python24
 lang/python26
 lang/python27
 lang/python31
+lang/ruby18%=RUBY_VERSION_DEFAULT=18
 lang/ruby18-base
+lang/ruby19%=RUBY_VERSION_DEFAULT=192
 lang/ruby19-base
+lang/ruby193%=RUBY_VERSION_DEFAULT=193
+lang/ruby193-base
 lang/tcl-expect
 mail/amavisd-new
 mail/courier-imap
@@ -414,6 +418,8 @@ www/ap2-fcgid
 www/ap2-jk
 www/apache-tomcat55
 www/apache-tomcat6
+www/apache22
+www/apache22%+apache-mpm-worker
 www/apachetop
 www/awstats
 www/cadaver

@@ -31,9 +31,6 @@ joyent/ruby-moqueue
 joyent/ruby-rest-client
 joyent/ruby-soap4r
 joyent/ruby-webrat
-lang/ruby18
-lang/ruby19
-lang/ruby19
 math/ruby-rb-gsl
 misc/ruby-columnize
 sysutils/capistrano
@@ -66,6 +63,6 @@ www/ruby-borges
 www/ruby-fcgi
 www/ruby-mechanize
 www/ruby-patron
-www/ruby-rails31
+www/ruby-rails32
 www/ruby-unicorn
 www/thin
