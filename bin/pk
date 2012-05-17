@@ -130,6 +130,7 @@ EOF
       log "* ${build_set}${version_string:+ (${version_string})}"
 
       for package in ${packages[@]}; do
+        unset package_options
         for part in ${package//${list_item_separator}/ }; do
           case ${part} in
             [+-]*)
@@ -155,13 +156,12 @@ EOF
         if [ ${package_options} ]; then
           package_option_var=$(bmake ${bmake_env[@]} show-var VARNAME=PKG_OPTIONS_VAR)
           if [ ${package_option_var} ]; then
-            bmake_env=(${bmake_env[@]} ${package_option_var}=${package_options[@]})
+            package_def_options=($(bmake ${bmake_env[@]} show-var VARNAME=${package_option_var}))
+            package_options=(${package_def_options[*]} ${package_options[*]})
           fi
-          unset package_options
         fi
-
         if [ ! ${forced_rebuild} ] && \
-           [ -f $(bmake ${bmake_env[@]} show-var VARNAME=PKGFILE) ]
+           [ -f $(bmake ${bmake_env[*]} ${package_option_var+${package_option_var}="${package_options[*]}"} show-var VARNAME=PKGFILE) ]
         then
           ((skipped=skipped+1))
           continue
@@ -177,7 +177,7 @@ EOF
         > ${package_log}.log
         list_package_files ante
         set +e
-        bmake ${bmake_env[@]} package >${package_log}.log 2>&1
+        bmake ${bmake_env[*]} ${package_option_var+${package_option_var}="${package_options[*]}"} package >${package_log}.log 2>&1
         status=$?
         set -e
         list_package_files post
