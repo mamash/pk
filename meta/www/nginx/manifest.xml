@@ -10,9 +10,6 @@
     <dependency name='filesystem-local' grouping='require_all' restart_on='none' type='service'>
       <service_fmri value='svc:/system/filesystem/local:default' />
     </dependency>
-    <dependency name='autofs' grouping='optional_all' restart_on='error' type='service'>
-      <service_fmri value='svc:/system/filesystem/autofs:default' />
-    </dependency>
     <method_context>
       <method_environment>
         <envvar name="LD_PRELOAD_32" value="/usr/lib/extendedFILE.so.1" />
