@@ -7,6 +7,10 @@ WRAPPER_SHELL?=			${BASH}
 COMMAND_SHELL?=			${BASH}
 
 TOOLS_PATH.ksh=			${TOOLS_PLATFORM.ksh}
+.if exists(${LOCALBASE}/bin/readelf)
+TOOLS_PATH.readelf?=		${LOCALBASE}/bin/readelf
+.endif
+
 # Avoid SunOS native openssl
 TOOLS_PLATFORM.openssl=		${LOCALBASE}/bin/openssl
 # Avoid these platform tools by default
