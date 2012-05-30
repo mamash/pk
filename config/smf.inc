@@ -101,3 +101,7 @@ SMF_NAME.sphinxsearch=sphinx
 SMF_NAME.mDNSResponder=mdnsresponder
 
 SMF_NAME.php53-fpm=php-fpm
+
+SMF_USER.redis=${REDIS_USER}
+SMF_GROUP.redis=${REDIS_GROUP}
+SMF_HOME.redis=${REDIS_DATADIR}

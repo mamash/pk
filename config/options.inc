@@ -160,7 +160,7 @@ ERUBY_DEFAULT_CHARSET=		utf8
 RUBY_VERSION_DEFAULT=		18
 
 #rails
-RUBY_RAILS_DEFAULT=		3
+RUBY_RAILS_DEFAULT=		32
 
 #nginx
 NGINX_PIDDIR=			/var/db/nginx
@@ -171,6 +171,8 @@ NGINX_GROUP=			www
 PROSODY_RUN=			/var/db/prosody
 
 #redis
+REDIS_USER?=			redis
+REDIS_GROUP?=			redis
 REDIS_PIDDIR=			/var/db/redis
 
 #postfix
