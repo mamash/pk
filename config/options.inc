@@ -170,6 +170,8 @@ NGINX_GROUP=			www
 PROSODY_RUN=			/var/db/prosody
 
 #redis
+REDIS_USER=			redis
+REDIS_GROUP=			redis
 REDIS_PIDDIR=			/var/db/redis
 
 #postfix
