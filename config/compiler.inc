@@ -2,6 +2,7 @@
 USE_NATIVE_GCC?=	no
 
 GCC_USE_RUNTIME?=	yes
+GCC_MAJOR_MINOR?=	47
 
 # We use x86_64 to identify 64bit packages
 # (upstream pkgsrc still uses i386 for both Intel archs on SunOS)
