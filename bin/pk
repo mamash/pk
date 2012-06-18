@@ -307,16 +307,16 @@ EOF
  
     for file in $(/bin/ls -1 | sed 's/-[^-]*tgz//' | sort | uniq -c | awk '{if ($1 != "1") print $2}'); do
       unset keep remove exception
-      keep=(  $(ls -1dr ${file}-* | grep -v "${file}-.*-" |\
-              sort -r -t. -k 1,1r -k 2,2nr -k 3,3nr -k 4,4nr -k 5,5nr |\
+      keep=(  $(ls -1dr ${file}-* | grep -v "${file}-.*-" | /usr/bin/sed 's/nb\([0-9]\)/..\1/' |\
+              sort -r -t. -k 1,1r -k 2,2nr -k 3,3nr -k 4,4nr -k 5,5nr | /usr/bin/sed 's/\.\./nb/' |\
               head -1 | sed 's/\.tgz//'))
-      remove=($(ls -1dr ${file}-* | grep -v "${file}-.*-" |\
-              sort -r -t. -k 1,1r -k 2,2nr -k 3,3nr -k 4,4nr -k 5,5nr |\
+      remove=($(ls -1dr ${file}-* | grep -v "${file}-.*-" | /usr/bin/sed 's/nb\([0-9]\)/..\1/' |\
+              sort -r -t. -k 1,1r -k 2,2nr -k 3,3nr -k 4,4nr -k 5,5nr | /usr/bin/sed 's/\.\./nb/' |\
               tail +2 | sed 's/\.tgz//'))
 
       for exception in "" ${prune_exceptions[@]}; do
         if [[ ${file} =~ ^${exception%-*}$ ]]; then
-          keep=(${keep[@]} $(echo ${remove[@]} | sed "s/.* \(${exception}[^ ]*\)/\1/"))
+          keep=(${keep[@]} $(echo ${remove[@]} | sed "s/^\(${exception}[^ ]*\).*/\1/"))
           remove=($(echo ${remove[@]} | sed "s/${exception}[^ ]*//"))
           continue  1
         fi
