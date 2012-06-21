@@ -236,6 +236,7 @@ multimedia/gpac
 multimedia/libdvdnav
 multimedia/ming
 net/bind99
+net/dnsmasq
 net/gnetcat
 net/haproxy
 net/libpcap
@@ -416,6 +417,7 @@ www/ap2-fcgid
 www/ap2-jk
 www/apache-tomcat55
 www/apache-tomcat6
+www/apache-tomcat7
 www/apache22
 www/apache22%+apache-mpm-worker
 www/apachetop
