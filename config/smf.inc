@@ -105,3 +105,7 @@ SMF_NAME.php53-fpm=php-fpm
 SMF_USER.redis=${REDIS_USER}
 SMF_GROUP.redis=${REDIS_GROUP}
 SMF_HOME.redis=${REDIS_DATADIR}
+
+SMF_USER.sqlrelay=${SQLR_USER}
+SMF_GROUP.sqlrelay=${SQLR_GROUP}
+SMF_HOME.sqlrelay=${SQLR_DATA}
