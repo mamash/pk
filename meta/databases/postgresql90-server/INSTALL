@@ -47,3 +47,4 @@ The default password for the master '@PGUSER@' user is:
 EOF
   fi
 ;;
+esac
