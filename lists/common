@@ -259,6 +259,7 @@ net/p5-Net-CIDR-Lite
 net/p5-Net-FTPSSL
 net/p5-Net-Ident
 net/p5-Net-OpenID-Consumer
+net/p5-SOAP-Transport-TCP
 net/proftpd
 net/quagga
 net/rabbitmq
