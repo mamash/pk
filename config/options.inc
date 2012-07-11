@@ -83,7 +83,7 @@ PKG_OPTIONS.php=		readline
 PKG_OPTIONS.MesaLib=		dri
 PKG_OPTIONS.wireshark=		-gtk2
 PKG_OPTIONS.milter-greylist=	postfix-milter
-PKG_OPTIONS.gcc47=		-gcc-go
+PKG_OPTIONS.gcc47=		-gcc-go -gcc-objc -gcc-objc++
 PKG_OPTIONS.doxygen=		-latex
 PKG_OPTIONS.openvpn=		pam
 
