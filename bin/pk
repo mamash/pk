@@ -365,7 +365,7 @@ EOF
     AWK=nawk /usr/bin/bash ${pkgsrcdir}/mk/scripts/binpkg-cache -s -p ${pkg_dir} >/dev/null
     log "checking for packages prohibited from being published"
     nawk -f ${pkgsrcdir}/mk/scripts/binpkg-scan PACKAGES=${pkg_dir} /dev/null > /tmp/remove-restricted.sh
-    if grep NO_BIN /tmp/remove-restricted.sh >/dev/null; then
+    if grep '^# NO_BIN' /tmp/remove-restricted.sh >/dev/null; then
       log "found restricted packages, see the /tmp/remove-restricted.sh script"
     fi
 
