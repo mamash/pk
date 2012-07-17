@@ -15,8 +15,10 @@ ABI_STRING=		_${ABI}
 # Optimize to -O2 by default
 CFLAGS+=		-O2
 
+.if ${PKGSRC_COMPILER} == "gcc"
 # Ignore out-of-scope definition errors
 CXXFLAGS+=		-fpermissive
+.endif
 
 # Parallel make jobs
 MAKE_JOBS=		8
