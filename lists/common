@@ -399,7 +399,9 @@ wip/p5-Imager
 wip/p5-JavaScript-SpiderMonkey
 wip/pagetools
 wip/phantomjs
+wip/py-amqplib
 wip/pyzor
+wip/rabbitmq-c
 wip/redis
 wip/riak
 wip/rsyslog5
