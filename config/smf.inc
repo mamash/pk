@@ -59,7 +59,7 @@ SMF_INSTANCE.courier-imap=authlib
 
 SMF_NAME.bind=dns/server
 
-SMF_NAME.net-snmp=sma
+SMF_NAME.net-snmp=snmp
 
 SMF_USER.rabbitmq=${RMQ_USER}
 SMF_GROUP.rabbitmq=${RMQ_GROUP}
