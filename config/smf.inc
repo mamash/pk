@@ -106,3 +106,7 @@ SMF_HOME.redis=${REDIS_DATADIR}
 SMF_USER.sqlrelay=${SQLR_USER}
 SMF_GROUP.sqlrelay=${SQLR_GROUP}
 SMF_HOME.sqlrelay=${SQLR_DATA}
+
+SMF_NAME.apache-tomcat=tomcat
+SMF_USER.apache-tomcat=${TOMCAT_USER}
+SMF_GROUP.apache-tomcat=${TOMCAT_GROUP}
