@@ -76,3 +76,7 @@ SMF_GROUP.zookeeper-server=${ZK_GROUP}
 SMF_USER.redis=${REDIS_USER}
 SMF_GROUP.redis=${REDIS_GROUP}
 SMF_HOME.redis=${REDIS_DATADIR}
+
+SMF_NAME.apache-tomcat=tomcat
+SMF_USER.apache-tomcat=${TOMCAT_USER}
+SMF_GROUP.apache-tomcat=${TOMCAT_GROUP}
