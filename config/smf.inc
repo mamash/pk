@@ -110,3 +110,14 @@ SMF_HOME.sqlrelay=${SQLR_DATA}
 SMF_NAME.apache-tomcat=tomcat
 SMF_USER.apache-tomcat=${TOMCAT_USER}
 SMF_GROUP.apache-tomcat=${TOMCAT_GROUP}
+
+SMF_NAME.nagios-base=nagios
+SMF_USER.nagios-base=${NAGIOS_USER}
+SMF_GROUP.nagios-base=${NAGIOS_GROUP}
+SMF_HOME.nagios-base=${NAGIOSDIR}
+
+SMF_NAME.nagios-nrpe=nrpe
+SMF_USER.nagios-nrpe=${NAGIOS_USER}
+SMF_GROUP.nagios-nrpe=${NAGIOS_GROUP}
+SMF_HOME.nagios-nrpe=${NAGIOSDIR}
+
