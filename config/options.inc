@@ -86,6 +86,7 @@ PKG_OPTIONS.milter-greylist=	postfix-milter
 PKG_OPTIONS.gcc47=		-gcc-go -gcc-objc -gcc-objc++
 PKG_OPTIONS.doxygen=		-latex
 PKG_OPTIONS.openvpn=		pam
+PKG_OPTIONS.mongodb=		ssl
 
 # Package specific configuration options
 
@@ -166,6 +167,10 @@ RUBY_RAILS_DEFAULT=		32
 NGINX_PIDDIR=			/var/db/nginx
 NGINX_USER=			www
 NGINX_GROUP=			www
+
+#lighttpd
+LIGHTTPD_USER=			www
+LIGHTTPD_GROUP=			www
 
 #prosody
 PROSODY_RUN=			/var/db/prosody
