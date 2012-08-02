@@ -1,0 +1,35 @@
+# $NetBSD$
+
+case ${STAGE} in
+POST-INSTALL)
+
+	# Use a Joyent optimized config file
+	cat >${PKG_PREFIX}/etc/mongodb.conf <<EOF
+# This is an example config file for MongoDB.
+dbpath = /var/mongodb
+bind_ip = 127.0.0.1
+port = 27017
+pidfilepath = /var/mongodb/mongodb.pid
+logpath = /var/log/mongodb/mongodb.log
+logappend = true
+journal = true
+nohttpinterface = true
+directoryperdb = true
+EOF
+	# Add RBAC profile for mongodb user
+	grep mongodb /etc/user_attr >/dev/null ||\
+		cat >>/etc/user_attr <<EOF
+mongodb::::profiles=Service Management,IP Filter Management
+EOF
+
+	# Enable the default user (for Cron jobs)
+	passwd -N mongodb
+
+	# Add a log rotation entry
+	grep mongodb /etc/logadm.conf >/dev/null ||\
+		cat >>/etc/logadm.conf <<EOF
+/var/log/mongodb/mongodb.log -C 5 -c -s 10k -z 1
+EOF
+
+	;;
+esac

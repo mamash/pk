@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# SMF method for svc:/pkgsrc/mongodb:default
+# See: http://wiki.joyent.com/display/jpc2/Joyent+MongoDB+SmartMachine
+# Version 1
+
+. /lib/svc/share/smf_include.sh
+
+PATH="@PREFIX@/bin:@PREFIX@/sbin:/usr/bin:/usr/sbin"
+HOSTNAME=$(hostname)
+DATADIR="@SMF_HOME@"
+MONGO_CONF="@PKG_SYSCONFDIR@/mongodb.conf"
+MONGO_PID="${DATADIR}/mongodb.pid"
+REPLKEY_FILE="${DATADIR}/.keyfile"
+IPF_FILE="${DATADIR}/.ipfrule"
+SMF_FMRI="svc:/pkgsrc/mongodb:default"
+
+case "$1" in
+  'start')
+    # Get SMF properties.
+    REPLSET=`svcprop -p replication/name ${SMF_FMRI} 2>/dev/null`
+    REPLKEY=`svcprop -p replication/key ${SMF_FMRI} 2>/dev/null`
+    REPLMEM=`svcprop -p replication/members ${SMF_FMRI} 2>/dev/null`
+
+    # If replication is set as a master.
+    if [[ ${REPLSET} != \"\" && ${REPLSET} != "astring:" ]] && [[ ${REPLKEY} != \"\" && ${REPLKEY} != "astring:" ]] && [[ ${REPLMEM} != \"\" && ${REPLMEM} != "astring:" ]]; then
+      # Do bind_ip check.
+      BIND_IP=$(grep bind_ip ${MONGO_CONF})
+      [[ ! -z "${BIND_IP}" && ! "${BIND_IP}" =~ ^# ]] && echo "ERROR - For replication bind_ip must be removed or commented out from ${MONGO_CONF}." && exit 2
+
+      # Do replication/key check.
+      [[ ${#REPLKEY} -gt 1024 ]] || [[ ${#REPLKEY} -lt 6 ]] && echo "ERROR - replication/key must be between 6 and 1024 characters." && exit 2;  
+
+      # Check that replication/members are valid ip:port or hostname:port combinations.
+      IFS=,
+      for i in ${REPLMEM}; do
+        if [[ $(echo ${i} | egrep "^((([2][5][0-5]|([2][0-4]|[1][0-9]|[0-9])?[0-9])\.){3})([2][5][0-5]|([2][0-4]|[1][0-9]|[0-9])?[0-9]):0*(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9])$") ]] || [[ $(echo ${i} | egrep "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])\.)+([a-zA-Z0-9]{2,5}):0*(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9])$") ]]; then
+          :
+        else
+          echo "ERROR - ${i} must be a valid ip:port or hostname:port combination." && exit 2
+        fi
+      done
+      
+      # Die if ipfilter isn't online.
+      [[ $(svcs -Ho state ipfilter) != "online" ]] && echo "ERROR - To use replication ipfilter must be enabled." && exit 2
+  
+      # Put in ipfilter rules for running on all interfaces.  MongoDB bug.
+      EXTERNAL_IP=$(ifconfig -a | ggrep -A 1 net0 | grep inet | awk '{ print $2 }')
+      MONGO_PORT=$(grep port ${MONGO_CONF} | awk '{ print $3 }')
+      [[ ! ${MONGO_PORT} ]] && MONGO_PORT="27017"
+      IPF_RULE="block in from any to ${EXTERNAL_IP}/32 port = ${MONGO_PORT}"
+      if [[ ! $(ipfstat -i 2>/dev/null | grep "${IPF_RULE}") ]]; then
+        echo "${IPF_RULE}" > ${IPF_FILE}
+        ipf -f ${IPF_FILE}
+      fi
+
+      # Create MongoDB replication key file.
+      echo "${REPLKEY}" > ${REPLKEY_FILE}
+      chown mongodb:mongodb ${REPLKEY_FILE}
+      chmod 600 ${REPLKEY_FILE}
+
+      # Run MongoDB with replication settings.
+      mongod --fork -f ${MONGO_CONF} --pidfilepath ${MONGO_PID} --replSet ${REPLSET} --keyFile ${REPLKEY_FILE}
+
+    # If replication is set as a slave.
+    elif [[ ${REPLSET} != \"\" && ${REPLSET} != "astring:" ]] && [[ ${REPLKEY} != \"\" && ${REPLKEY} != "astring:" ]] && [[ ${REPLMEM} == \"\" || ${REPLMEM} == "astring:" ]]; then
+      # Do bind_ip check.
+      BIND_IP=$(grep bind_ip ${MONGO_CONF})
+      [[ ! -z "${BIND_IP}" && ! "${BIND_IP}" =~ ^# ]] && echo "ERROR - For replication bind_ip must be removed or commented out from ${MONGO_CONF}." && exit 2
+
+      # Do replication/key check.
+      [[ ${#REPLKEY} -gt 1024 ]] || [[ ${#REPLKEY} -lt 6 ]] && echo "ERROR - replication/key must be between 6 and 1024 characters." && exit 2;  
+
+      # Check that DATADIR exists and has nothing in it.
+      #[[ ! -d "${DATADIR}" ]] && echo "ERROR - ${DATADIR} must be created to make a slave." && exit 2
+      #CHECK=$(ls ${DATADIR} 2> /dev/null | egrep -v "^journal$|^mongodb.pid$")
+      #[[ ${CHECK} ]] && echo "ERROR - ${DATADIR} must be empty to make a slave." && exit 2
+
+      # Die if ipfilter isn't online.
+      [[ $(svcs -Ho state ipfilter) != "online" ]] && echo "ERROR - To use replication ipfilter must be enabled." && exit 2
+
+      # Put in ipfilter rules for running on all interfaces.  MongoDB bug.
+      EXTERNAL_IP=$(ifconfig -a | ggrep -A 1 net0 | grep inet | awk '{ print $2 }')
+      MONGO_PORT=$(grep port ${MONGO_CONF} | awk '{ print $3 }')
+      [[ ! ${MONGO_PORT} ]] && MONGO_PORT="27017"
+      IPF_RULE="block in from any to ${EXTERNAL_IP}/32 port = ${MONGO_PORT}"
+      if [[ ! $(ipfstat -i 2>/dev/null | grep "${IPF_RULE}") ]]; then
+        echo "${IPF_RULE}" > ${IPF_FILE}
+        ipf -f ${IPF_FILE}
+      fi
+
+      # Create MongoDB replication key file.
+      echo "${REPLKEY}" > ${REPLKEY_FILE}
+      chown mongodb:mongodb ${REPLKEY_FILE}
+      chmod 600 ${REPLKEY_FILE}
+
+      # Run MongoDB with replication settings.
+      mongod --fork -f ${MONGO_CONF} --pidfilepath ${MONGO_PID} --replSet ${REPLSET} --keyFile ${REPLKEY_FILE}
+
+    # If replication is set as neither master or slave.
+    else
+      echo "starting regular."
+      mongod --fork -f ${MONGO_CONF} --pidfilepath ${MONGO_PID}
+    fi
+    ;;
+
+  'stop')
+    [[ -s ${MONGO_PID} ]] && kill $(cat ${MONGO_PID}) 2>/dev/null
+    ;;
+
+  'restart')
+    [[ -s ${MONGO_PID} ]] && kill $(cat ${MONGO_PID}) 2>/dev/null
+    sleep 3
+    mongod --fork -f ${MONGO_CONF} --pidfilepath ${MONGO_PID}
+    ;;
+
+  *)
+    echo "usage: $0 { start | stop | restart }"
+    exit 2
+    ;;
+esac
+
+exit
