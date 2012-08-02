@@ -35,3 +35,7 @@ ACCEPTABLE_LICENSES+=	opensolaris-binary-license
 
 # Sun Distributor License for Java
 ACCEPTABLE_LICENSES+=	sun-distributor-java-license
+
+# AGPL, this may involve extra concerns for people
+# actually using such packages
+ACCEPTABLE_LICENSES+=	gnu-agpl-v3
