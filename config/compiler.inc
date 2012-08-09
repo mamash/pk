@@ -20,6 +20,9 @@ CFLAGS+=		-O2
 CXXFLAGS+=		-fpermissive
 .endif
 
+# Link libumem by default for increased performance
+LIBS+=			-lumem
+
 # Parallel make jobs
 MAKE_JOBS=		8
 
