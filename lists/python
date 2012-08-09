@@ -22,10 +22,6 @@ textproc/py-xml
 textproc/py-yaml
 time/py-dateutil
 time/py-mxDateTime
-wip/py-jabber-aimt
-wip/py-jabber-icqt
-wip/py-jabber-msnt
-wip/py-jabber-yahoo-transport
 wip/py-libmc
 wip/py-memcached
 www/ap2-python
