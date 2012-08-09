@@ -3,13 +3,15 @@
 case ${STAGE} in
 POST-INSTALL)
 
-  if [ ! -f @PGLOGFILE@ ]; then
-    touch @PGLOGFILE@
-    chown @PGUSER@ @PGLOGFILE@
-    chgrp @PGGROUP@ @PGLOGFILE@
+  log_file=@VARBASE@/log/postgresql.log
+
+  if [ ! -f ${log_file} ]; then
+    touch ${log_file}
+    chown @PGUSER@ ${log_file}
+    chgrp @PGGROUP@ ${log_file}
   fi
 
-  if [ -d @PGHOME@ ] && [ -d @PGDATA@ ]; then
+  if [ -d @PGHOME@ ] && [ -d @PGHOME@/data ]; then
     echo "Skipping database initialization, data directory already exists."
   else
 
@@ -29,7 +31,7 @@ EOF
 
     /usr/bin/su - @PGUSER@ -c \
       ${PKG_PREFIX}'/bin/initdb \
-      --pgdata=@PGDATA@ \
+      --pgdata=@PGHOME@/data \
       --encoding=UTF8 \
       --locale=en_US.UTF-8 \
       --auth=password \
