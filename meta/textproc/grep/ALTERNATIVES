@@ -1,3 +1,0 @@
-bin/gegrep @PREFIX@/bin/egrep
-bin/gfgrep @PREFIX@/bin/fgrep
-bin/ggrep @PREFIX@/bin/grep

@@ -1,7 +1,0 @@
-bin/gfind @PREFIX@/bin/find
-bin/glocate @PREFIX@/bin/locate
-bin/gupdatedb @PREFIX@/bin/updatedb
-bin/gxargs @PREFIX@/bin/xargs
-libexec/gbigram @PREFIX@/libexec/bigram
-libexec/gcode @PREFIX@/libexec/code
-libexec/gfrcode @PREFIX@/libexec/frcode

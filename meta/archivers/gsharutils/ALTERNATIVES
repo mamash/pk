@@ -1,5 +1,0 @@
-bin/gmail-files @PREFIX@/bin/mail-files
-bin/gmailshar @PREFIX@/bin/mailshar
-bin/gremsync @PREFIX@/bin/remsync
-bin/gshar @PREFIX@/bin/shar
-bin/gunshar @PREFIX@/bin/unshar

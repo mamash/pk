@@ -1,2 +1,0 @@
-bin/gcpio @PREFIX@/bin/cpio
-libexec/grmt @PREFIX@/libexec/rmt
