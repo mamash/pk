@@ -26,22 +26,19 @@
       <service_fmri value='svc:/milestone/network'/>
     </dependency>
     <dependency name='config-file' grouping='require_all' restart_on='refresh' type='path'>
-      <service_fmri value='file://localhost/etc/sma/snmp/snmpd.conf'/>
+      <service_fmri value='file://localhost/@PKG_SYSCONFDIR@/snmpd.conf'/>
     </dependency>
-    <exec_method name='start' type='method' exec='@PREFIX@/@SMF_METHOD_FILE@' timeout_seconds='60'/>
+    <exec_method name='start' type='method' exec='@PREFIX@/sbin/snmpd -c %{config_file}' timeout_seconds='60'/>
     <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'/>
-    <property_group name='general' type='framework'>
-      <property name='action_authorization' type='astring'/>
-    </property_group>
-    <property_group name='manifestfiles' type='framework'>
-      <propval name='var_svc_manifest_application_management_sma_xml' type='astring' value='@PREFIX@/share/smf/manifest/sma.xml '/>
+    <property_group name="application" type="application">
+      <propval name="config_file" type="astring" value="@PKG_SYSCONFDIR@/snmpd.conf" />
     </property_group>
     <template>
       <common_name>
         <loctext xml:lang='C'>net-snmp SNMP daemon</loctext>
       </common_name>
       <documentation>
-        <manpage title='snmpd' section='1M' manpath='/usr/share/man/'/>
+        <manpage title='snmpd' section='1M' manpath='@PREFIX@/@PKGMANDIR@/'/>
       </documentation>
     </template>
   </service>
