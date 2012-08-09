@@ -90,13 +90,13 @@ EOF
       case ${target} in
         *php*)
           version=${target#*=}
-          [ ${version} == ${target} ] && version=53
+          [ ${version} == ${target} ] && version=54
           version_string="PHP_VERSION_DEFAULT=${version//\./}"
           target=${target%=*}
           ;;
         *ruby*)
           version=${target#*=}
-          [ ${version} == ${target} ] && version=18
+          [ ${version} == ${target} ] && version=193
           version_string="RUBY_VERSION_DEFAULT=${version//\./}"
           target=${target%=*}
           ;;
@@ -241,7 +241,7 @@ EOF
       case ${depends} in
         *php*)
           version_var=PHP_VERSION_DEFAULT
-          version_nos=(53)
+          version_nos=(53 54)
           ;;
         *python*)
           version_var=PYTHON_VERSION_DEFAULT
@@ -249,11 +249,11 @@ EOF
           ;;
         *ruby*)
           version_var=RUBY_VERSION_DEFAULT
-          version_nos=(1.8 1.9)
+          version_nos=(18 19 193)
           ;;
         *postgresql*)
           version_var=PGSQL_VERSION_DEFAULT
-          version_nos=(90)
+          version_nos=(91)
           ;;
         *)
           unset version_var
@@ -500,7 +500,7 @@ OVERLAY=		${overlay}
     log "creating the final tarball"
 
     cd / && \
-      tar -cf - -T /tmp/.bootstrap_files | \
+      gtar -cf - -T /tmp/.bootstrap_files | \
         gzip > ${pkg_dir}/bootstrap.tar.gz
     rm -f /tmp/.bootstrap_files
 

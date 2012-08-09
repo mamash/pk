@@ -83,7 +83,7 @@ init() {
     ;;
   esac
   if [ "${zfs_control}" == "yes" ]; then
-    zfs_path=${zfs_base}/${prefix_string}/${release}_${abi}
+    zfs_path=${zfs_base}/${prefix_string}_${release}_${abi}
   else
     zfs_path='n/a'
   fi
@@ -102,7 +102,7 @@ defaults() {
     compiler)   echo 'gcc';;
     prefix)     echo '/opt/local';;
     release)    echo "$(cat ${pkgsrcdir}/.git/HEAD|sed 's/^.*[_-]//')";;
-    targets)    echo 'common php=52 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31';;
+    targets)    echo 'common php=54 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31 python=32';;
     build_base) echo "${pk_dir}";;
     build_dir)  echo '${build_base}/logs';;
     overlay)    echo "${pk_dir}";;
@@ -221,12 +221,6 @@ zfs() {
 }
 
 create_prefix() {
-  if ! zfs list -Ho name -t filesystem ${zfs_base}/${prefix_string} >/dev/null 2>&1; then
-    log "creating a ZFS node for ${prefix}"
-    zfs create ${zfs_base}/${prefix_string} >/dev/null 2>&1
-    zfs set mountpoint=none ${zfs_base}/${prefix_string} >/dev/null 2>&1
-  fi
-
   if ! zfs list -Ho name -t filesystem ${zfs_path} >/dev/null 2>&1; then
     log "creating a ZFS node for ${prefix}/${release}"
     zfs create ${zfs_path} >/dev/null 2>&1
