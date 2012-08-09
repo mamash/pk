@@ -60,7 +60,7 @@ PKG_OPTIONS.openssh=		hpn-patch
 PKG_OPTIONS.nginx=		dav status realip uwsgi memcache
 PKG_OPTIONS.php-sqlite=		utf8
 PKG_OPTIONS.graphviz=		-gtk pangocairo x11
-PKG_OPTIONS.roundcube=		sqlite
+PKG_OPTIONS.roundcube=		#
 PKG_OPTIONS.spidermonkey=	-threads unicode
 PKG_OPTIONS.cairo=		x11
 PKG_OPTIONS.libpurple=		-gstreamer -farsight -avahi -dbus -gnome
@@ -138,7 +138,7 @@ PGGROUP=			postgres
 PYTHON_VERSION_DEFAULT=		27
 
 # PHP
-PHP_VERSION_DEFAULT=		53
+PHP_VERSION_DEFAULT=		54
 PHP_MYSQL_DRIVER=		mysqlnd
 
 # Sympa
@@ -157,7 +157,7 @@ AMAVIS_GROUP=			amavis
 ERUBY_DEFAULT_CHARSET=		utf8
 
 # ruby
-RUBY_VERSION_DEFAULT=		18
+RUBY_VERSION_DEFAULT=		193
 
 #rails
 RUBY_RAILS_DEFAULT=		32
