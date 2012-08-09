@@ -11,7 +11,7 @@
       <service_fmri value="svc:/system/filesystem/local" />
     </dependency>
     <dependency name='@SMF_NAME@-epmd' grouping='require_all' restart_on='none' type='service'>
-      <service_fmri value='svc:/network/epmd' />
+      <service_fmri value='svc:/pkgsrc/epmd' />
     </dependency>
     <method_context working_directory="@SMF_HOME@">
       <method_credential user="@SMF_USER@" group="@SMF_GROUP@" />
