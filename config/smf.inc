@@ -40,11 +40,8 @@ SMF_HOME.couchdb=${COUCH_DBDIR}
 SMF_NAME.mysql-server=mysql
 
 SMF_NAME.postgresql84-server=postgresql
-SMF_INSTANCE.postgresql84-server=pg84
 SMF_NAME.postgresql90-server=postgresql
-SMF_INSTANCE.postgresql90-server=pg90
 SMF_NAME.postgresql91-server=postgresql
-SMF_INSTANCE.postgresql91-server=pg91
 
 SMF_NAME.erlang=epmd
 
@@ -59,7 +56,7 @@ SMF_INSTANCE.courier-imap=authlib
 
 SMF_NAME.bind=dns/server
 
-SMF_NAME.net-snmp=sma
+SMF_NAME.net-snmp=snmp
 
 SMF_USER.rabbitmq=${RMQ_USER}
 SMF_GROUP.rabbitmq=${RMQ_GROUP}
