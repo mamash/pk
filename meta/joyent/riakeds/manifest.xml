@@ -11,7 +11,7 @@
       <service_fmri value="svc:/system/filesystem/local" />
     </dependency>
     <dependency name="riak-epmd" grouping="require_all" restart_on="restart" type="service">
-      <service_fmri value="svc:/network/epmd:default" />
+      <service_fmri value="svc:/pkgsrc/epmd:default" />
     </dependency>
     <method_context working_directory="/tmp" project="riak">
       <method_credential user="@SMF_USER@" group="@SMF_GROUP@" />

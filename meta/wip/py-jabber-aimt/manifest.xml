@@ -20,7 +20,7 @@
         <service_fmri value='file://localhost@PKG_SYSCONFDIR@/pyaimt.xml' />
       </dependency>
       <dependency name='@SMF_INSTANCE@-ejabberd' grouping='require_all' restart_on='none' type='service'>
-        <service_fmri value='svc:/network/jabber:ejabberd' />
+        <service_fmri value='svc:/pkgsrc/ejabberd' />
       </dependency>
       <exec_method name='start' type='method' exec='@PREFIX@/bin/PyAIMt -b -d -l @JABBER_LOGDIR@/pyaimt.log' timeout_seconds='60' />
       <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60' />
