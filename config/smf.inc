@@ -83,12 +83,12 @@ SMF_GROUP.varnish=${VRNGROUP}
 
 SMF_USER.riak=${RIAK_USER}
 SMF_GROUP.riak=${RIAK_GROUP}
-SMF_HOME.riak=${RIAK_HOME}
+SMF_HOME.riak=${RIAK_DATA}
 
 SMF_NAME.riakeds=riak
 SMF_USER.riakeds=${RIAK_USER}
 SMF_GROUP.riakeds=${RIAK_GROUP}
-SMF_HOME.riakeds=${RIAK_HOME}
+SMF_HOME.riakeds=${RIAK_DATA}
 
 SMF_NAME.zookeeper-server=zookeeper
 SMF_USER.zookeeper-server=${ZK_USER}
