@@ -16,9 +16,12 @@ archivers/unrar
 archivers/unzip
 archivers/zoo
 archivers/zziplib
+audio/id3lib
 audio/liba52
 audio/mpg321
 audio/opencore-amr
+audio/ruby-taglib
+audio/taglib
 audio/vorbis-tools
 benchmarks/bonnie++
 benchmarks/sysbench
