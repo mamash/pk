@@ -50,6 +50,7 @@ databases/postgresql-postgis
 databases/postgresql91-adminpack
 databases/postgresql91-datatypes
 databases/postgresql91-dblink
+databases/postgresql91-fuzzystrmatch
 databases/postgresql91-monitoring
 databases/postgresql91-pgcrypto
 databases/postgresql91-plperl
@@ -68,6 +69,7 @@ devel/bzr
 devel/cppunit
 devel/cscope
 devel/cvsps
+devel/doxygen
 devel/epydoc
 devel/fossil
 devel/fromcvs
