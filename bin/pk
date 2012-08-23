@@ -473,6 +473,7 @@ OVERLAY=		${overlay}
       pkgin
       pkg_install
       pkg_install-info
+      xz
       zlib
     )
 
