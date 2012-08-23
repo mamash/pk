@@ -325,6 +325,7 @@ sysutils/findutils
 sysutils/install-sh
 sysutils/libol
 sysutils/libpciaccess
+sysutils/logrotate
 sysutils/mc
 sysutils/p5-File-Copy-Recursive
 sysutils/p5-Sys-Hostname-Long
@@ -389,7 +390,6 @@ wip/fcgiwrap
 wip/gearmand
 wip/innotop
 wip/libuuid
-wip/logrotate
 wip/luaposix
 wip/man
 wip/manifold
