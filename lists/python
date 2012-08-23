@@ -7,6 +7,7 @@ joyent/py-gitosis
 joyent/py-svn
 lang/py-pyrex
 math/py-numpy
+math/py-scipy
 net/py-boto
 print/py-reportlab
 security/py-crypto
@@ -22,6 +23,8 @@ textproc/py-xml
 textproc/py-yaml
 time/py-dateutil
 time/py-mxDateTime
+wip/py-amqplib
+wip/py-graphite-web
 wip/py-libmc
 wip/py-memcached
 www/ap2-python

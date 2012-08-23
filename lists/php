@@ -1,5 +1,6 @@
 databases/pear-MDB2_Driver_mysql
 databases/pear-MDB2_Driver_pgsql
+databases/php-dbx
 databases/php-oci8
 databases/php-redis
 databases/phpmyadmin
@@ -10,6 +11,7 @@ joyent/php-mailparse
 joyent/php-sphinx
 joyent/php-sqlrelay
 net/php-geoip
+print/php-pdflib
 security/php-suhosin
 textproc/php-pspell
 wip/php-dtrace
@@ -20,4 +22,6 @@ wip/php-memcached
 wip/php-oauth
 wip/php-ssh2
 wip/php-tidy
+www/php-apc
+www/php-eaccelerator
 www/php-uploadprogress

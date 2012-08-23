@@ -20,7 +20,6 @@ audio/id3lib
 audio/liba52
 audio/mpg321
 audio/opencore-amr
-audio/ruby-taglib
 audio/taglib
 audio/vorbis-tools
 benchmarks/bonnie++
@@ -149,7 +148,9 @@ graphics/p5-GraphViz2
 graphics/p5-PerlMagick
 graphics/tex-a2ping
 joyent/GeoLiteCity
+joyent/ap2-usdt
 joyent/changepass
+joyent/dtracetools
 joyent/enstratus-agent
 joyent/gdb7
 joyent/genbfpw
@@ -172,6 +173,7 @@ joyent/p5-User-Utmp
 joyent/pgagent
 joyent/ree
 joyent/riakeds
+joyent/smtools
 joyent/sqlrelay
 lang/erlang
 lang/f2c
@@ -241,6 +243,8 @@ multimedia/ffmpeg
 multimedia/gpac
 multimedia/libdvdnav
 multimedia/ming
+multimedia/vlc
+net/Transmission
 net/bind99
 net/dnsmasq
 net/gnetcat
@@ -294,6 +298,7 @@ pkgtools/pkgin
 pkgtools/shlock
 print/cups
 print/poppler-utils
+print/pslib
 print/psutils
 print/web2c
 security/aide
@@ -328,6 +333,7 @@ sysutils/findutils
 sysutils/install-sh
 sysutils/libol
 sysutils/libpciaccess
+sysutils/logrotate
 sysutils/mc
 sysutils/p5-File-Copy-Recursive
 sysutils/p5-Sys-Hostname-Long
@@ -392,20 +398,20 @@ wip/fcgiwrap
 wip/gearmand
 wip/innotop
 wip/libuuid
-wip/logrotate
 wip/luaposix
 wip/man
 wip/manifold
+wip/mongodb
 wip/mtop
 wip/munin-master
 wip/munin-node
 wip/mysql-sphinxse
+wip/node
 wip/p5-Frontier-RPC
 wip/p5-Imager
 wip/p5-JavaScript-SpiderMonkey
 wip/pagetools
 wip/phantomjs
-wip/py-amqplib
 wip/pyzor
 wip/rabbitmq-c
 wip/redis
@@ -428,6 +434,7 @@ www/apache-tomcat6
 www/apache-tomcat7
 www/apache22
 www/apache22%+apache-mpm-worker
+www/apache24
 www/apachetop
 www/awstats
 www/cadaver
