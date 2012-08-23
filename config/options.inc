@@ -3,7 +3,11 @@ PKG_DEFAULT_OPTIONS=		-x11 dtrace -doc unicode inet6
 
 # Package specific build options
 PKG_OPTIONS.ruby=		-ruby-build-ri-db
+.if defined(PKGPATH) && !empty(PKGPATH:Mapache22)
 PKG_OPTIONS.apache=		suexec apache-shared-modules
+.else
+PKG_OPTIONS.apache=		suexec apache-mpm-shared
+.endif
 PKG_OPTIONS.apr-util=		ldap db4
 PKG_OPTIONS.postfix=		pcre sasl tls sqlite
 PKG_OPTIONS.proftpd=		tls pam
