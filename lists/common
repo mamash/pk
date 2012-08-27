@@ -410,6 +410,7 @@ wip/riak
 wip/rsyslog5
 wip/rsyslog6
 wip/sphinxsearch
+wip/stud
 wip/syslog-ng2
 wip/tftp-hpa
 wip/zookeeper-client
