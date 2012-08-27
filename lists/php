@@ -15,6 +15,7 @@ print/php-pdflib
 security/php-suhosin
 textproc/php-pspell
 wip/php-dtrace
+wip/php-ffmpeg
 wip/php-geoip
 wip/php-http
 wip/php-imagick
