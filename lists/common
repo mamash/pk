@@ -66,6 +66,7 @@ devel/bzr
 devel/cscope
 devel/cvsps
 devel/epydoc
+devel/exctags
 devel/fossil
 devel/fromcvs
 devel/gettext
@@ -384,6 +385,7 @@ wip/riak
 wip/rsyslog5
 wip/rsyslog6
 wip/sphinxsearch
+wip/stud
 wip/syslog-ng2
 wip/tftp-hpa
 wip/yaws
