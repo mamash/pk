@@ -36,7 +36,7 @@ instance="$2" 		# %i
 
 # Set defaults; SMF_FMRI should have been set, but just in case.
 if [ -z "$SMF_FMRI" ]; then
-    SMF_FMRI="svc:/network/dns/server:${instance}"
+    SMF_FMRI="svc:/pkgsrc/dns/server:${instance}"
 fi
 server="@PREFIX@/sbin/named"
 I=`/usr/bin/basename $0`
