@@ -52,7 +52,7 @@ SMF_GROUP.amavisd-new=${AMAVIS_GROUP}
 SMF_NAME.courier-imap=courier
 SMF_INSTANCE.courier-imap=imap
 SMF_NAME.courier-authlib=courier
-SMF_INSTANCE.courier-imap=authlib
+SMF_INSTANCE.courier-authlib=authlib
 
 SMF_NAME.bind=dns/server
 
