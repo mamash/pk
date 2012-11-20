@@ -89,6 +89,7 @@ devel/memcached
 devel/monotone
 devel/nbpatch
 devel/ncursesw
+devel/nspr
 devel/p5-Algorithm-C3
 devel/p5-Array-Compare
 devel/p5-Cache-Memcached
@@ -138,6 +139,7 @@ graphics/GraphicsMagick
 graphics/Mesa
 graphics/dvipng
 graphics/gdchart
+graphics/giflib-util
 graphics/gifsicle
 graphics/gnuplot
 graphics/gocr
@@ -250,6 +252,7 @@ net/dnsmasq
 net/gnetcat
 net/haproxy
 net/libpcap
+net/libcares
 net/mrtg
 net/mtr
 net/nagios-base
