@@ -15,7 +15,7 @@ PKG_OPTIONS.subversion=		#
 PKG_OPTIONS.django=		mysql pgsql sqlite
 PKG_OPTIONS.courier-authlib=	bdb pam
 PKG_OPTIONS.ImageMagick=	-wmf
-PKG_OPTIONS.lynx=		-curses ncurses
+PKG_OPTIONS.lynx=		-curses ncursesw
 PKG_OPTIONS.openldap-server=	sasl bdb
 PKG_OPTIONS.openldap-client=	sasl
 PKG_OPTIONS.ffmpeg=		xvid x264 theora tools opencore-amr
@@ -24,7 +24,7 @@ PKG_OPTIONS.dovecot=		pam sqlite dovecot-sieve dovecot-managesieve
 .else
 PKG_OPTIONS.dovecot=		pam sqlite
 .endif
-PKG_OPTIONS.mutt=		-curses ncurses
+PKG_OPTIONS.mutt=		-curses ncursesw
 PKG_OPTIONS.groff=		-groff-docs
 PKG_OPTIONS.mysql5-client=	-ssl
 .if defined(PKGPATH) && !empty(PKGPATH:Mmysql51)
@@ -123,7 +123,7 @@ AUTHDAEMONVAR=			/var/authdaemon
 MAILMAN_CGIEXT=			# empty
 MAILMAN_USER=			mailman
 MAILMAN_GROUP=			mailman
-MAILMAN_MAILGROUP=		nobody
+MAILMAN_MAILGROUP=		mailman
 
 # MySQL
 MYSQL_VERSION_DEFAULT=		55
@@ -189,7 +189,8 @@ POSTFIX_USER=			postfix
 POSTFIX_GROUP=			postfix
 
 #munin
-MUNIN_RUN=			/var/munin/run
+MUNIN_STATEDIR=			/var/munin/run
+MUNIN_RUN=			${MUNIN_STATEDIR}
 
 #bind
 BIND_DIR=			/var/named
