@@ -101,7 +101,7 @@ defaults() {
     abi)        echo '$(cd ${pkgsrcdir}/devel/bmake; bmake show-var VARNAME=ABI)';;
     compiler)   echo 'gcc';;
     prefix)     echo '/opt/local';;
-    release)    echo "$(cat ${pkgsrcdir}/.git/HEAD|sed 's/^.*[_-]//')";;
+    release)    echo "$(cat ${pkgsrcdir}/.git/HEAD|sed 's|^.*/||; s|^.*_||')";;
     targets)    echo 'common php=54 php=53 ruby=18 ruby=192 ruby=193 python=27 python=31 python=32';;
     build_base) echo "${pk_dir}";;
     build_dir)  echo '${build_base}/logs';;
