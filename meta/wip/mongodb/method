@@ -2,17 +2,16 @@
 #
 # SMF method for svc:/pkgsrc/mongodb:default
 # See: http://wiki.joyent.com/display/jpc2/Joyent+MongoDB+SmartMachine
-# Version 1
+# Version 1.2
 
 . /lib/svc/share/smf_include.sh
 
-PATH="@PREFIX@/bin:@PREFIX@/sbin:/usr/bin:/usr/sbin"
+PATH="@PREFIX@/bin:@PREFIX@/gnu/bin:@PREFIX@/sbin:/usr/bin:/usr/sbin"
 HOSTNAME=$(hostname)
 DATADIR="@SMF_HOME@"
 MONGO_CONF="@PKG_SYSCONFDIR@/mongodb.conf"
 MONGO_PID="${DATADIR}/mongodb.pid"
 REPLKEY_FILE="${DATADIR}/.keyfile"
-IPF_FILE="${DATADIR}/.ipfrule"
 SMF_FMRI="svc:/pkgsrc/mongodb:default"
 
 case "$1" in
@@ -24,13 +23,9 @@ case "$1" in
 
     # If replication is set as a master.
     if [[ ${REPLSET} != \"\" && ${REPLSET} != "astring:" ]] && [[ ${REPLKEY} != \"\" && ${REPLKEY} != "astring:" ]] && [[ ${REPLMEM} != \"\" && ${REPLMEM} != "astring:" ]]; then
-      # Do bind_ip check.
-      BIND_IP=$(grep bind_ip ${MONGO_CONF})
-      [[ ! -z "${BIND_IP}" && ! "${BIND_IP}" =~ ^# ]] && echo "ERROR - For replication bind_ip must be removed or commented out from ${MONGO_CONF}." && exit 2
 
       # Do replication/key check.
       [[ ${#REPLKEY} -gt 1024 ]] || [[ ${#REPLKEY} -lt 6 ]] && echo "ERROR - replication/key must be between 6 and 1024 characters." && exit 2;  
-
       # Check that replication/members are valid ip:port or hostname:port combinations.
       IFS=,
       for i in ${REPLMEM}; do
@@ -40,19 +35,7 @@ case "$1" in
           echo "ERROR - ${i} must be a valid ip:port or hostname:port combination." && exit 2
         fi
       done
-      
-      # Die if ipfilter isn't online.
-      [[ $(svcs -Ho state ipfilter) != "online" ]] && echo "ERROR - To use replication ipfilter must be enabled." && exit 2
-  
-      # Put in ipfilter rules for running on all interfaces.  MongoDB bug.
-      EXTERNAL_IP=$(ifconfig -a | ggrep -A 1 net0 | grep inet | awk '{ print $2 }')
-      MONGO_PORT=$(grep port ${MONGO_CONF} | awk '{ print $3 }')
-      [[ ! ${MONGO_PORT} ]] && MONGO_PORT="27017"
-      IPF_RULE="block in from any to ${EXTERNAL_IP}/32 port = ${MONGO_PORT}"
-      if [[ ! $(ipfstat -i 2>/dev/null | grep "${IPF_RULE}") ]]; then
-        echo "${IPF_RULE}" > ${IPF_FILE}
-        ipf -f ${IPF_FILE}
-      fi
+      unset IFS
 
       # Create MongoDB replication key file.
       echo "${REPLKEY}" > ${REPLKEY_FILE}
@@ -64,30 +47,9 @@ case "$1" in
 
     # If replication is set as a slave.
     elif [[ ${REPLSET} != \"\" && ${REPLSET} != "astring:" ]] && [[ ${REPLKEY} != \"\" && ${REPLKEY} != "astring:" ]] && [[ ${REPLMEM} == \"\" || ${REPLMEM} == "astring:" ]]; then
-      # Do bind_ip check.
-      BIND_IP=$(grep bind_ip ${MONGO_CONF})
-      [[ ! -z "${BIND_IP}" && ! "${BIND_IP}" =~ ^# ]] && echo "ERROR - For replication bind_ip must be removed or commented out from ${MONGO_CONF}." && exit 2
 
       # Do replication/key check.
       [[ ${#REPLKEY} -gt 1024 ]] || [[ ${#REPLKEY} -lt 6 ]] && echo "ERROR - replication/key must be between 6 and 1024 characters." && exit 2;  
-
-      # Check that DATADIR exists and has nothing in it.
-      #[[ ! -d "${DATADIR}" ]] && echo "ERROR - ${DATADIR} must be created to make a slave." && exit 2
-      #CHECK=$(ls ${DATADIR} 2> /dev/null | egrep -v "^journal$|^mongodb.pid$")
-      #[[ ${CHECK} ]] && echo "ERROR - ${DATADIR} must be empty to make a slave." && exit 2
-
-      # Die if ipfilter isn't online.
-      [[ $(svcs -Ho state ipfilter) != "online" ]] && echo "ERROR - To use replication ipfilter must be enabled." && exit 2
-
-      # Put in ipfilter rules for running on all interfaces.  MongoDB bug.
-      EXTERNAL_IP=$(ifconfig -a | ggrep -A 1 net0 | grep inet | awk '{ print $2 }')
-      MONGO_PORT=$(grep port ${MONGO_CONF} | awk '{ print $3 }')
-      [[ ! ${MONGO_PORT} ]] && MONGO_PORT="27017"
-      IPF_RULE="block in from any to ${EXTERNAL_IP}/32 port = ${MONGO_PORT}"
-      if [[ ! $(ipfstat -i 2>/dev/null | grep "${IPF_RULE}") ]]; then
-        echo "${IPF_RULE}" > ${IPF_FILE}
-        ipf -f ${IPF_FILE}
-      fi
 
       # Create MongoDB replication key file.
       echo "${REPLKEY}" > ${REPLKEY_FILE}

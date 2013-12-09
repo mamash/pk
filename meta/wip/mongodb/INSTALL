@@ -1,7 +1,150 @@
 # $NetBSD$
 
 case ${STAGE} in
+DEINSTALL)
+	if [ -f ${PKG_PREFIX}/bin/repl-init ]; then
+	  rm ${PKG_PREFIX}/bin/repl-init
+	fi
+	;;
+
 POST-INSTALL)
+	
+	# Install a replica initiator script
+	cat >${PKG_PREFIX}/bin/repl-init <<'PKG_EOF'
+#!/usr/bin/bash
+#
+# MongoDB replication initator.
+# See: http://wiki.joyent.com/display/jpc2/Joyent+MongoDB+SmartMachine
+# Version 1.2
+
+usage() {
+cat << EOF
+
+MongoDB replica initiator.
+
+Usage: $0 [ -u <username> | -p <password> ] -i -a <member:port>
+       -i             - Initiate replication with members.
+       -a             - Add member to Replca Set.
+       -u <username>  - Username to authenticate to MongoDB.
+       -p <password>  - Password to authenticate to MongoDB.
+
+EOF
+exit 2;
+}
+
+while getopts "ia:u:p:" OPTION; do
+        case $OPTION in
+                i)      
+                        INIT=YES;
+                        ;;
+                a)      
+                        ADD=$OPTARG;
+                        ;;
+                u)      
+                        MONGO_USER=$OPTARG;
+                        ;;
+                p)
+                        MONGO_PASS=$OPTARG;
+                        ;;
+        esac
+done
+
+PATH="/opt/local/bin:/opt/local/gnu/bin:/opt/local/sbin:/usr/bin:/usr/sbin";
+[[ ! ${INIT} ]] && [[ ! ${ADD} ]] && usage;
+[[ ${INIT} ]] && [[ ${ADD} ]] && usage;
+
+[[ ! ${MONGO_PASS} ]] && MONGO_PASS=$(mdata-get mongodb_pw);
+[[ ! ${MONGO_USER} ]] && MONGO_USER="admin";
+MONGOCONF="/opt/local/etc/mongodb.conf";
+
+mongo_conn() {
+        # Check if we can connect to MongoDB
+        BINDIP=`grep bind_ip ${MONGOCONF}`;
+        if [ `echo "${BINDIP}" | egrep -c "^#"` -eq 0 ]; then
+                HOST=`echo ${BINDIP} | cut -d= -f2 | awk '{ print $1 }'`;
+                CONNECT=`mongo -u${MONGO_USER} -p${MONGO_PASS} admin --host ${HOST} --eval="db.version();" 2>/dev/null`;
+                [ $? -gt 0 ] && logerror "ERROR - Couldn't connect to MongoDB with ${MONGO_USER}/${MONGO_PASS}" && exit 2;
+        else
+                CONNECT=`mongo -u${MONGO_USER} -p${MONGO_PASS} admin --eval="db.version();" 2>/dev/null`;
+                [ $? -gt 0 ] && logerror "ERROR - Couldn't connect to MongoDB with ${MONGO_USER}/${MONGO_PASS}" && exit 2;
+        fi
+
+        return 0;       
+}       
+
+repl_init() {
+        # Set other vars, grab SMF properties.
+        SMF_FMRI="svc:/pkgsrc/mongodb:default";
+        REPLSET=`svcprop -p replication/name ${SMF_FMRI} 2>/dev/null`;
+        REPLMEM=`svcprop -p replication/members ${SMF_FMRI} 2>/dev/null`;
+
+        IFS=,;
+        COUNT="0";
+        for i in ${REPLMEM}; do
+                # Check that each member is a valid ip:port or hostname:port combination.
+                if [[ $(echo ${i} | egrep "^((([2][5][0-5]|([2][0-4]|[1][0-9]|[0-9])?[0-9])\.){3})([2][5][0-5]|([2][0-4]|[1][0-9]|[0-9])?[0-9]):0*(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9])$") ]] || [[ $(echo ${i} | egrep "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])\.)+([a-zA-Z0-9]{2,5}):0*(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9])$") ]]; then
+                        eval "MEMSTRING${COUNT}=\"{_id: ${COUNT}, host: '${i}'}, \"";
+                        ((COUNT++));
+                else
+                        echo "ERROR - ${i} is not a valid ip:port or hostname:port combination." && exit 2;
+                fi
+        done
+        unset IFS;
+
+        # Set beginning of replication configuration string.
+        BEGINMEMSTRING="config = {_id: '${REPLSET}', members: [ ";
+
+        # Combine replication string together.
+        i=0;
+        while [ "${i}" -lt ${COUNT} ]; do
+                eval FULLMEMSTRING1="\${FULLMEMSTRING1}\${MEMSTRING${i}}";
+                ((i++));
+        done
+
+        # Strip last two characters from combined string.
+        FULLMEMSTRING=$(echo "${FULLMEMSTRING1}" | sed 's/.\{2\}$/] };/');
+
+cat << EOF
+
+Initializing Replica Set, this may take a second..
+Name: ${REPLSET}
+Members: ${REPLMEM}
+
+EOF
+
+        CHECK=$(mongo -u ${MONGO_USER} -p${MONGO_PASS} admin --eval="${BEGINMEMSTRING}${FULLMEMSTRING} printjson(rs.initiate(config));");
+        ERRMSG=$(echo "${CHECK}" | grep errmsg | awk -F\" '{ print $4 }' | sed 's/,$//g');
+
+        if [[ ${ERRMSG} ]]; then
+                [[ ${ERRMSG} =~ "set name does not" ]] && echo -ne "ERROR - ${ERRMSG}.\nCheck that replication/name matches on all members.\n\n" && exit 2;
+                [[ ${ERRMSG} =~ "can't" ]] && echo -ne "ERROR - ${ERRMSG}.\nCheck that your SMF configuration is correct.\n\n" && exit 2;
+                [[ ${ERRMSG} =~ "has data already" ]] && echo -ne "ERROR - ${ERRMSG}.\nCheck that all members have no data already.\n\n" && exit 2;
+                [[ ${ERRMSG} =~ "need all members up" ]] && echo -ne "ERROR - ${ERRMSG}.\nCheck that all members are up and running.\n\n" && exit 2;
+                echo -ne "ERROR - ${ERRMSG}.\n\n" && exit 2;
+        fi
+
+        echo "Done!  Replication is syncing now.";
+}
+
+repl_add() {
+        # Check that each member is a valid ip:port or hostname:port combination.
+        if [[ $(echo ${ADD} | egrep "^((([2][5][0-5]|([2][0-4]|[1][0-9]|[0-9])?[0-9])\.){3})([2][5][0-5]|([2][0-4]|[1][0-9]|[0-9])?[0-9]):0*(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][09]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9])$") ]] || [[ $(echo ${ADD} | egrep "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])\.)+([a-zA-Z0-9]{2,5}):0*(?:6553[0-5]|655[0-2][0-9]|65[04][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9])$") ]]; then
+                echo "Adding member ${ADD}, this may take a second..";
+                mongo -u ${MONGO_USER} -p${MONGO_PASS} admin --eval="rs.add(\"${ADD}\")" > /dev/null 2>&1;
+                sleep 8;
+                CHECK=$(mongo -u${MONGO_USER} -p${MONGO_PASS} admin --eval="printjson(rs.status())" | egrep -A 1 \"${ADD}\" | grep health | awk -F': ' '{ print $2 }' | sed 's/,//g');
+
+                [[ ${CHECK} -eq "0" ]] && "ERROR - There was an error adding ${ADD}.  Check that the member is up." && exit 2;
+                echo "Member ${ADD} has been successfully added.";
+        else
+                echo "ERROR - ${ADD} is not a valid ip:port or hostname:port combination." && exit 2;
+        fi
+}
+
+[[ ${INIT} ]] && mongo_conn && repl_init;
+[[ ${ADD} ]] && mongo_conn && repl_add;
+PKG_EOF
+	chmod +x ${PKG_PREFIX}/bin/repl-init
 
 	# Use a Joyent optimized config file
 	cat >${PKG_PREFIX}/etc/mongodb.conf <<EOF
@@ -24,6 +167,10 @@ EOF
 
 	# Enable the default user (for Cron jobs)
 	passwd -N mongodb
+
+	# Create a project
+	projadd -c "MongoDB Service" -K "process.max-file-descriptor=(basic,10000,deny)" \
+	  -U mongodb -G mongodb mongodb
 
 	# Add a log rotation entry
 	grep mongodb /etc/logadm.conf >/dev/null ||\
