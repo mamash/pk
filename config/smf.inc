@@ -124,3 +124,5 @@ SMF_HOME.nagios-nrpe=${NAGIOSDIR}
 SMF_USER.mongodb=${MONGODB_USER}
 SMF_GROUP.mongodb=${MONGODB_GROUP}
 SMF_HOME.mongodb=${MONGODB_DBPATH}
+
+SMF_NAME.rsync=rsyncd

@@ -70,7 +70,7 @@ PKG_OPTIONS.cairo=		x11
 PKG_OPTIONS.libpurple=		-gstreamer -farsight -avahi -dbus -gnome
 PKG_OPTIONS.sysbench=		mysql pgsql
 PKG_OPTIONS.netcat6=		inet6
-PKG_OPTIONS.sudo=		pam
+PKG_OPTIONS.sudo=		pam ldap
 PKG_OPTIONS.p5-HTML-Mason=	modperl fcgi
 PKG_OPTIONS.heimdal=		kerberos-prefix-cmds
 PKG_OPTIONS.mpg123=		mpg123-with-fpu -mpg123-fifo -mpg123-x86-dither
@@ -208,3 +208,9 @@ SPECTRUM_LOG=			/var/log/spectrum
 
 #zookeeper
 ZK_RUN=				/var/db/zookeeper
+
+HBASE_PID_DIR=         ${VARBASE}/log/hbase
+OOZIE_PID_DIR=         ${VARBASE}/log/oozie
+PIG_PID_DIR=           ${VARBASE}/log/pig
+TEMPLETON_PID_DIR=     ${VARBASE}/log/templeton
+
