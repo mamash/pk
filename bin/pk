@@ -376,7 +376,7 @@ EOF
     log "starting rsync"
     if [ ${repo_dir} ]; then
       ssh ${repo_user}@${repo_hostname} "[ -d ${repo_dir} ] || mkdir -p ${repo_dir}"
-      ${rsync} -az --delete --rsync-path=/opt/local/bin/rsync \
+      ${rsync} -az --delete \
         ${pkg_dir}/ ${repo_user}@${repo_hostname}:${repo_dir}/
     fi
   ;;
