@@ -59,10 +59,16 @@ init() {
   export PATH=${compiler_dir}:${PATH}:${prefix}/bin:${prefix}/sbin
   abi=$(eval echo ${abi})
   [ ${abi} ] || abi=32
+  if [ ${abi} == 64 ]; then
+    arch=x86_64
+  else
+    arch=i386
+  fi
   zfs_base=zones/$(zonename)/base
   /usr/sbin/zfs get name ${zfs_base} >/dev/null 2>&1 && zfs_control=yes || true
   platform=$([[ $(uname -v) =~ ^joyent ]] && echo sdc6 || echo sdc5)
   construct_build_id
+  build_id=$(eval echo ${build_id})
   repo_dir=$(eval echo ${repo_dir})
   repo_url=$(eval echo ${repo_url})
   pkg_dir=$(eval echo ${pkg_dir})
