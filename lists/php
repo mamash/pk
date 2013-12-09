@@ -23,6 +23,8 @@ wip/php-memcached
 wip/php-oauth
 wip/php-ssh2
 wip/php-tidy
+www/ap-php
+www/ap-php%=APACHE_VERSION_DEFAULT=24
 www/php-apc
 www/php-eaccelerator
 www/php-uploadprogress

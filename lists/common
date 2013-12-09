@@ -151,6 +151,7 @@ graphics/p5-PerlMagick
 graphics/tex-a2ping
 joyent/GeoLiteCity
 joyent/ap2-usdt
+joyent/ap2-usdt%=APACHE_VERSION_DEFAULT=24
 joyent/changepass
 joyent/dtracetools
 joyent/enstratus-agent
@@ -395,6 +396,7 @@ textproc/p5-YAML
 textproc/p5-ack
 time/p5-Time-modules
 wip/ap2-xsendfile
+wip/ap2-xsendfile%=APACHE_VERSION_DEFAULT=24
 wip/binutils
 wip/discount
 wip/fcgiwrap
@@ -432,6 +434,12 @@ www/ap2-auth-pgsql
 www/ap2-bw
 www/ap2-fcgid
 www/ap2-jk
+www/ap2-auth-external%=APACHE_VERSION_DEFAULT=24
+www/ap2-auth-mysql%=APACHE_VERSION_DEFAULT=24
+www/ap2-auth-pgsql%=APACHE_VERSION_DEFAULT=24
+www/ap2-bw%=APACHE_VERSION_DEFAULT=24
+www/ap2-fcgid%=APACHE_VERSION_DEFAULT=24
+www/ap2-jk%=APACHE_VERSION_DEFAULT=24
 www/apache-tomcat55
 www/apache-tomcat6
 www/apache-tomcat7

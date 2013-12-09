@@ -1,0 +1,12 @@
+joyent/ap2-usdt%=PKG_APACHE_DEFAULT=apache24
+wip/ap2-xsendfile%=PKG_APACHE_DEFAULT=apache24
+www/ap2-auth-external%=PKG_APACHE_DEFAULT=apache24
+www/ap2-auth-mysql%=PKG_APACHE_DEFAULT=apache24
+www/ap2-auth-pgsql%=PKG_APACHE_DEFAULT=apache24
+www/ap2-bw%=PKG_APACHE_DEFAULT=apache24
+www/ap2-fcgid%=PKG_APACHE_DEFAULT=apache24
+www/ap2-jk%=PKG_APACHE_DEFAULT=apache24
+www/ap-php%=PKG_APACHE_DEFAULT=apache24
+www/ap2-python%=PKG_APACHE_DEFAULT=apache24
+www/ap2-wsgi%=PKG_APACHE_DEFAULT=apache24
+wip/ap2-passenger%=PKG_APACHE_DEFAULT=apache24

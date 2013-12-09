@@ -29,6 +29,8 @@ wip/py-libmc
 wip/py-memcached
 www/ap2-python
 www/ap2-wsgi
+www/ap2-python%=APACHE_VERSION_DEFAULT=24
+www/ap2-wsgi%=APACHE_VERSION_DEFAULT=24
 www/py-beautifulsoup
 www/py-clearsilver
 www/py-django

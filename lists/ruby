@@ -49,6 +49,7 @@ textproc/ruby-syntax
 textproc/ruby-treetop
 textproc/ruby-yajl
 wip/ap2-passenger
+wip/ap2-passenger%=APACHE_VERSION_DEFAULT=24
 wip/ruby-dnssd
 wip/ruby-term-ansicolor
 wip/ruby-xmpp4r
