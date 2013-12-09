@@ -186,6 +186,7 @@ POSTFIX_GROUP=			postfix
 
 #munin
 MUNIN_RUN=			/var/munin/run
+MUNIN_STATEDIR=			${MUNIN_RUN}
 
 #bind
 BIND_DIR=			/var/named
